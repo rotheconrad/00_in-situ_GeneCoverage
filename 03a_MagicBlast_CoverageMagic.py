@@ -603,7 +603,7 @@ def calc_genome_stats(
 
     print('\nWhole Genome Values:\n')
     print(wg_header[:-1])
-    print(wg_lineout[:-1])
+    print(wg_lineout[:-1], '\n')
 
 
 def operator(
@@ -774,11 +774,6 @@ def main():
             args['out_file_prefix'],
             args['NCBI_CDS_genomic']
             )
-
-    import os
-    import psutil
-    process = psutil.Process(os.getpid())
-    print(process.memory_info().rss)
 
 
 if __name__ == "__main__":
