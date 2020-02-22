@@ -21,7 +21,7 @@ This workflow produces separate files in tab separated value (tsv) format for AN
 
 #### This workflow leads to the following result files:
 
-- 3 column tsv output of Contig(or gene_name), coverage(or ANIr), sequence length.
+- 3 column tsv output of (Contig, Gene, or Intergenic region), (Depth, Breadth, or ANIr), sequence length.
 - Writes 11 files total:
     - \{out_file_prefix\}_genome_by_bp.tsv
     - \{out_file_prefix\}_genome.tsv
