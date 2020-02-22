@@ -168,19 +168,19 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     *For the outfile_name of the -out flag use the naming scheme of uniqueID_metagenomeID.blast where uniqueID is the unique identifier for your genome or MAG.*
 
     ```bash
-    magicblast -query {metagenome_fasta} -db Combined_Genomes.fasta -infmt (fasta or fastq) -no_unaligned -splice F -outfmt tabular -parse_deflines T -out {outfile_name}.blast
+    magicblast -query {metagenome_fasta} -db Combined_Genomes.fasta -infmt (fasta or fastq) -no_unaligned -splice F -outfmt tabular -parse_deflines T -out uniqueID_metagenomeID.blast
     ```
 
 5. Shuffle blast results
 
     ```bash
-    shuf {outfile_name}.blast > {outfile_name}.shuf.blast
+    shuf uniqueID_metagenomeID.blast > uniqueID_metagenomeID.shuf.blast
     ```
 
 6. Filter results for best hits
 
     ```bash
-    python 01_MagicBlast_ShortRead_Filter.py -i {outfile_name}.shuf.blast -pml 0.9 -rl 70
+    python 01_MagicBlast_ShortRead_Filter.py -i uniqueID_metagenomeID.shuf.blast -pml 0.9 -rl 70
     ```
 
 6. De-concatenate
@@ -194,7 +194,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
     while read uniqueID
         do
-            grep $uniqueID {outfile_name}.fltrdBstHts.blst >> uniqueID.blast
+            grep $uniqueID uniqueID_metagenomeID.fltrdBstHts.blst >> uniqueID.blast
         done < uniqueID_list.txt
     ```
 
@@ -215,23 +215,33 @@ prodigal -i genomic_fasta.fna -o my.genes -a my.proteins.faa
 *The scripts takes 1 uniqueID.blast file at a time with its corresponding metagenome, genomic fasta, and predicted genes files. For the outfile_prefix of the -o flag use the naming scheme of uniqueID_metagenomeID where uniqueID is the unique identifier for your genome or MAG.*
 
 ```bash
-python 03_MagicBlast_CoverageMagic.py -m {metagenome.fasta} -g {genomic_fasta.fna} -p {my.proteins.faa} -b {uniqueID.blast} -c 95 -d 80 -o {outfile_prefix} (add -n if using NCBI Assembly files)
+python 03a_MagicBlast_CoverageMagic.py -m metagenomeID.fna -g uniqueID.fna -p my.proteins.faa -b uniqueID.blast -c 95 -d 80 -o uniqueID_metagenomeID (add -n if using NCBI Assembly files)
 ```
 
 *If using Genomic FASTA and CDS from genomic FASTA files retrieved from the NCBI assembly database, the Genomic FASTA goes to the -g flag and CDS from genomic FASTA goes to the -p flag replacing the my.proteins.faa file from Prodigal.*
 
 The -c flag is a cutoff threshold for the percent identity of the metagenomic read alignments to the genomic reference. Sequence discontinuity gaps for sequence discrete populations are generally observed around 95% percent sequence identity. This is a good starting point, but depending on your target population you may want to increase or decrease this value. Looking at the distribution of percent identity values or a recruitment plot is a great way to investigate the sequence discontinuity for your population of interest.
 
+You can visualize your sequence identity distribution with a histogram using the following:
+
+```bash
+python 03b_MagicBlast_pIdent_Hist.py -i uniqueID.blast
+```
+
+![alt text](03c_Example_plot.png "Example histogram plot.")
+
+Or you can use the [Enveonmics collection](http://enve-omics.ce.gatech.edu/enveomics/index) to build a [recruitment plot](http://enve-omics.ce.gatech.edu/enveomics/docs?t=BlastTab.recplot2.R). There's even have a [GUI](http://enve-omics.ce.gatech.edu/enveomics/gui) to make things a bit easier.
+
 The -d flag is for the truncated average value or TAD parameter. A value of 100 will return results without truncation.
 
 ## Step 04: Generate summary plots.
 
 ```bash
-python 04_MagicBlast_CoverageMagic_SummaryPlot.py -pre {outfile_prefix} -thd 95 -tad 80
+python 04a_MagicBlast_CoverageMagic_SummaryPlot.py -pre {outfile_prefix} -thd 95 -tad 80
 ```
 
 Example plot:
-![alt text](04b_Example_plot.png "Example plot.")
+![alt text](04b_Example_plot.png "Example summary plot.")
 
 
 ## Step 05: Build Data Table of Whole Genome stats for multiple genomes across multiple metagenomes
