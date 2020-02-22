@@ -1,14 +1,19 @@
 #!/usr/bin/env python
 
-'''Calculates Coverage Per Contig and Gene from MagicBlast Tabular Output.
+'''Calculates ANIr and Sequence Coverage from Magic Blast Output.
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !! Magic Blast output should be filtered prior to using this script   !!
 !! Use MagicBlast01_ShortRead_Filter.py or other method.              !!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!! This script calculates Gene coverage based on CDS positional       !!
-!! information as well as inter-gene or between CDS regions. This     !!
-!! script assumes the CDS file to be ordered by genome position.      !!
+!! This script calculates ANIr and sequence coverage (as depth and    !!
+!! breadth) from tabular Magic Blast output for the whole genome or   !!
+!! or MAG, each contig in the genomic sequence fasta file, each       !!
+!! predicted coding sequence (protein coding gene), and each          !!
+!! intergenic region. It requires the metagenomic fasta file used as  !!
+!! the blast queries, the genonimic reference sequence used as the    !!
+!! database or subject, and a fasta file of predicted protein coding  !!
+!! sequences predicted by Prodigal from the genomic reference.        !!
 !! The *_CDS_from_genomic.fna files from NCBI are usually in order.   !!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -371,7 +376,12 @@ def get_relative_abundance(wg_tad, mtg):
             'Error in determining metagenome format of fasta or fastq. '
             'Please double check metagenome file type and try again. '
             'Metagenome file should be either fasta or fastq format with '
-            f'file extension of one of {fqtype} or {fatype}.'
+            f'file extension of one of {fqtype} or {fatype}.\n\n'
+            'If there is a file extension you would like added, please '
+            'submit a feature request through the issues tab of the '
+            'GitHub repo at: '
+            'https://github.com/rotheconrad/00_in-situ_GeneCoverage/issues'
+            '.\n I will be happy to add aditional file extensions.\n\n'
             )
         sys.exit()
 
@@ -461,7 +471,7 @@ def calc_tad_anir_relabndc(
     return wgtad, wgbreadth, wgani, relabndc, total_metagenome_bp
 
 
-def operator(mtg, rgf, tbf, pgf, thd, tad, outpre):
+def operator(mtg, rgf, tbf, pgf, thd, tad, outpre, ncbi):
     """ Runs the different functions and writes out results """
 
     tadp = tad / 100
@@ -565,11 +575,12 @@ def main():
         required=True
         )
     parser.add_argument(
-        '-p', '--CDS_from_genomic_file',
-        help='Please specify the prodigal gene fasta file!',
+        '-p', '--prodigal_protein_fasta',
+        help='Please specify the Prodigal protein fasta file!',
         metavar='',
         type=str,
-        required=True
+        required=False,
+        default=None
         )
     parser.add_argument(
         '-c', '--pIdent_threshold_cutoff',
@@ -592,6 +603,14 @@ def main():
         type=str,
         required=True
         )
+    parser.add_argument(
+        '-n', '--NCBI_Assembly_files',
+        help='Pass this flag if using files from the NCBI Assembly database.',
+        metavar='',
+        action='store_true',
+        type=str,
+        required=False
+        )
     args=vars(parser.parse_args())
 
     # Do what you came here to do:
@@ -600,10 +619,11 @@ def main():
             args['metagenome_file'],
             args['ref_genome_file'],
             args['tabular_blast_file'],
-            args['CDS_from_genomic_file'],
+            args['prodigal_protein_fasta'],
             args['pIdent_threshold_cutoff'],
             args['truncated_avg_depth_value'],
-            args['out_file_prefix']
+            args['out_file_prefix'],
+            args['NCBI_Assembly_files']
             )
 
 
