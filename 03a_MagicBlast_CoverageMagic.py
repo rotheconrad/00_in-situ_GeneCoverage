@@ -4,7 +4,7 @@
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !! Magic Blast output should be filtered prior to using this script   !!
-!! Use MagicBlast01_ShortRead_Filter.py or other method.              !!
+!! Use 01c_ShortRead_Filter.py or other method.                       !!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !! This script calculates ANIr and sequence coverage (as depth and    !!
 !! breadth) from tabular Magic Blast output for the whole genome or   !!
@@ -129,8 +129,14 @@ def read_genome_lengths(rgf):
 def calc_genome_coverage(tbf, rgf_tad, rgf_ani, thrshld):
     """ Reads tabblast file and adds coverage by genome position """
 
+    read_count = 0
     with open(tbf, 'r') as f:
         for l in f:
+            # Progress Tracker
+            if read_count % 50000 == 0:
+                print(f'... Blast matches processed: {read_count:013}')
+            read_count += 1
+
             # Skip magic blast header
             if l.startswith('#'): continue
 
@@ -207,7 +213,7 @@ def get_strt_stp(location):
     return p1, p2
 
 
-def retrieve_gene_coverage(pgf, rgf_tad, rgf_ani):
+def retrieve_ncbi_gene_coverage(pgf, rgf_tad, rgf_ani):
     """ Retrieves list of depths for each bp position of gene length """
 
     gn_tad = defaultdict(list) # initialize dictionary
@@ -217,10 +223,9 @@ def retrieve_gene_coverage(pgf, rgf_tad, rgf_ani):
     intergn_tad = defaultdict(list) # initialize dictionary
     intergn_ani = defaultdict(list)
     intergn_len = {}
-    intergn_count = 1
 
     with open(pgf, 'r') as f:
-        stp = 1
+        stp = 0
         for name, seq in read_fasta(f):
             contig_name = '_'.join(name.split('|')[1].split('_')[:2])
             protein = name.split('protein=')[1].split(']')[0]
@@ -234,15 +239,17 @@ def retrieve_gene_coverage(pgf, rgf_tad, rgf_ani):
             strt = min(p1, p2) # start of CDS region
 
             # Define intergenic or between CDS regions
-            intergene_strt = stp # start of inter-CDS region
-            intergene_stp = strt # stop of inter-CDS region
-            intergene_len = intergene_stp - intergene_strt + 1
-            intergene_name = f'intergene_{intergn_count:06}'
-            intergn_count += 1
+            intergene_strt = stp+1 # start of inter-CDS region
+            intergene_stp = strt-1 # stop of inter-CDS region
+            intergene_len = intergene_stp - intergene_strt
 
             stp = max(p1, p2) # stop of CDS region
 
             gene_name = f'{contig_name}:{locus_tag}:{protein_id}:{protein}'
+
+            intergene_name = (
+                f'{contig_name}_intergene_{intergene_strt}-{intergene_stp}'
+                )
 
             gn_len[gene_name] = len(seq)
             intergn_len[intergene_name] = intergene_len
@@ -257,6 +264,80 @@ def retrieve_gene_coverage(pgf, rgf_tad, rgf_ani):
                 intergn_tad[intergene_name].append(rgf_tad[contig_name][i])
                 intergn_ani[intergene_name].extend(rgf_ani[contig_name][i])
 
+        # Get intergene region after last predicted coding region.
+        intergene_strt = stp + 1
+        intergene_stp = len(rgf_tad[contig_name])
+        intergene_len = intergene_stp - intergene_strt
+
+        intergene_name = (
+            f'{contig_name}_intergene_{intergene_strt}-{intergene_stp}'
+            )
+        intergn_len[intergene_name] = intergene_len
+        # Get depth values for intergene (inter-CDS) regions
+        for i in range(intergene_strt, intergene_stp+1, 1):
+            intergn_tad[intergene_name].append(rgf_tad[contig_name][i])
+            intergn_ani[intergene_name].extend(rgf_ani[contig_name][i])
+
+    return gn_tad, gn_ani, gn_len, intergn_tad, intergn_ani, intergn_len
+
+
+def retrieve_prodigal_gene_coverage(pgf, rgf_tad, rgf_ani):
+    """ Retrieves list of depths for each bp position of gene length """
+
+    gn_tad = defaultdict(list) # initialize dictionary
+    gn_ani = defaultdict(list)
+    gn_len = {}
+
+    intergn_tad = defaultdict(list) # initialize dictionary
+    intergn_ani = defaultdict(list)
+    intergn_len = {}
+
+    with open(pgf, 'r') as f:
+        stp = 1 # initial stp value for intergene calculation
+        for name, seq in read_fasta(f):
+            X = name.split(' # ')
+            gene_name = X[0][1:]
+            contig_name = '_'.join(gene_name.split('_')[:-1])
+
+            strt = min(int(X[1]), int(X[2]))
+
+            # Define intergenic or between CDS regions
+            intergene_strt = stp + 1 # start of inter-CDS region
+            intergene_stp = strt # stop of inter-CDS region
+            intergene_len = intergene_stp - intergene_strt
+
+            stp = max(int(X[1]), int(X[2]))
+
+            intergene_name = (
+                f'{contig_name}_intergene_{intergene_strt}-{intergene_stp}'
+                )
+
+            gn_len[gene_name] = len(seq)
+            intergn_len[intergene_name] = intergene_len
+
+            # Get depth values for gene (CDS) regions
+            for i in range(strt, stp+1, 1):
+                gn_tad[gene_name].append(rgf_tad[contig_name][i])
+                gn_ani[gene_name].extend(rgf_ani[contig_name][i])
+
+            # Get depth values for intergene (inter-CDS) regions
+            for i in range(intergene_strt, intergene_stp+1, 1):
+                intergn_tad[intergene_name].append(rgf_tad[contig_name][i])
+                intergn_ani[intergene_name].extend(rgf_ani[contig_name][i])
+
+        # Get intergene region after last predicted coding region.
+        intergene_strt = stp + 1
+        intergene_stp = len(rgf_tad[contig_name])
+        intergene_len = intergene_stp - intergene_strt
+
+        intergene_name = (
+            f'{contig_name}_intergene_{intergene_strt}-{intergene_stp}'
+            )
+        intergn_len[intergene_name] = intergene_len
+        # Get depth values for intergene (inter-CDS) regions
+        for i in range(intergene_strt, intergene_stp+1, 1):
+            intergn_tad[intergene_name].append(rgf_tad[contig_name][i])
+            intergn_ani[intergene_name].extend(rgf_ani[contig_name][i])
 
     return gn_tad, gn_ani, gn_len, intergn_tad, intergn_ani, intergn_len
 
@@ -401,33 +482,99 @@ def write_file(in_d, len_d, outpre, outpost, precision):
             o.write(f'{k}\t{v:.{precision}f}\t{len_d[k]}\n')
 
 
-def calc_tad_anir_relabndc(
-                            mtg,
-                            wglen,
-                            rgf_tad,
-                            rgf_ani,
-                            rgf_len,
-                            gn_tad,
-                            gn_ani,
-                            gn_len,
-                            intergn_tad,
-                            intergn_ani,
-                            intergn_len,
-                            tad,
-                            outpre,
-                            precision
-                            ):
+def calc_contig_stats(rgf_tad, rgf_ani, rgf_len, tad, outpre, precision):
+    """Calculate ANIr, TAD and breadth and write to files for Contigs"""
 
-    """ Calculate tad and anir for whole genome, contig, and gene """
-
-    print('... Calculating TADs for Contigs')
+    print('... Calculating TADs for Contigs.')
     contig_tad, contig_breadth, wg_tad = get_contig_tad(rgf_tad, tad)
+
+    print('... Writing Contig TAD file.')
+    _ = write_file(contig_tad, rgf_len, outpre, '_contig_tad.tsv', precision)
+
+    print('... Writing Contig Breadth file.')
+    _ = write_file(
+        contig_breadth, rgf_len, outpre, '_contig_breadth.tsv', precision
+        )
+
+    contig_tad = None
+    contig_breadth = None
+
+    print('... Calculating ANIr for Contigs')
+    contig_anir, wg_ani = get_contig_anir(rgf_ani, tad)
+
+    print('... Writing Contig ANIr file.')
+    _ = write_file(contig_anir, rgf_len, outpre, '_contig_anir.tsv', precision)
+
+    contig_anir = None
+
+    return wg_tad, wg_ani
+
+
+def calc_gene_stats(gn_tad, gn_anir, gn_len, tad, outpre, precision):
+    """Calculate ANIr, TAD and breadth and write to files for Genes"""
 
     print('... Calculating TADs for Genes')
     gene_tad, gene_breadth = get_gene_tad(gn_tad, tad)
 
+    print('... Writing Gene TAD file.')
+    _ = write_file(gene_tad, gn_len, outpre, '_gene_tad.tsv', precision)
+
+    print('... Writing Gene Breadth file.')
+    _ = write_file(gene_breadth, gn_len, outpre, '_gene_breadth.tsv', precision)
+
+    gene_tad = None
+    gene_breadth = None
+
+    print('... Calculating ANI for Genes')
+    gene_anir = get_gene_anir(gn_anir, tad)
+
+    print('... Writing Gene ANIr file.')
+    _ = write_file(gene_anir, gn_len, outpre, '_gene_anir.tsv', precision)
+
+    gene_anir = None
+
+
+def calc_intergene_stats(
+                    intergn_tad,
+                    intergn_anir,
+                    intergn_len,
+                    tad,
+                    outpre,
+                    precision
+                    ):
+
+    """Calculate ANIr, TAD and breadth and write to Intergene files"""
+
     print('... Calculating TADs for Inter-Gene Regions')
     intergene_tad, intergene_breadth = get_gene_tad(intergn_tad, tad)
+
+    print('... Writing Intergene TAD file.')
+    _ = write_file(
+        intergene_tad, intergn_len, outpre, '_inter-gene_tad.tsv', precision
+        )
+
+    print('... Writing Intergene Breadth file.')
+    _ = write_file(
+        intergene_breadth, intergn_len, outpre,
+        '_inter-gene_breadth.tsv', precision
+        )
+
+    intergene_tad = None
+    intergene_breadth = None
+
+    print('... Calculating ANI for Inter-Gene Regions')
+    intergene_anir = get_gene_anir(intergn_anir, tad)
+
+    print('... Writing Intergene ANIr file.')
+    _ = write_file(
+        intergene_anir, intergn_len, outpre, '_inter-gene_anir.tsv', precision
+        )
+
+    intergene_anir = None
+
+
+def calc_genome_stats(mtg, wg_tad, wg_anir, wglen, tad, outpre, precision):
+    """Calculate ANIr, TAD and breadth and writes to Genome files"""
 
     print('... Calculating TAD for Genome')
     wgbreadth = sum(i > 0 for i in wg_tad) / len(wg_tad)
@@ -436,94 +583,8 @@ def calc_tad_anir_relabndc(
     print('... Calculating Total Metagenome Size & Relative Abundance')
     relabndc, total_metagenome_bp = get_relative_abundance(wg_tad, mtg)
 
-    print('... Calculating ANI for Contigs')
-    contig_ani, wg_ani = get_contig_anir(rgf_ani, tad)
-
-    print('... Calculating ANI for Genes')
-    gene_ani = get_gene_anir(gn_ani, tad)
-
-    print('... Calculating ANI for Inter-Gene Regions')
-    intergene_ani = get_gene_anir(intergn_ani, tad)
-
     print('... Calculating ANI for Genome')
-    wgani = get_average(wg_ani, tad)
-
-    print('\nWriting output files ...')
-    _ = write_file(contig_tad, rgf_len, outpre, '_contig_tad.tsv', precision)
-    _ = write_file(
-        contig_breadth, rgf_len, outpre, '_contig_breadth.tsv', precision
-        )
-    _ = write_file(contig_ani, rgf_len, outpre, '_contig_anir.tsv', precision)
-    _ = write_file(gene_tad, gn_len, outpre, '_gene_tad.tsv', precision)
-    _ = write_file(gene_breadth, gn_len, outpre, '_gene_breadth.tsv', precision)
-    _ = write_file(gene_ani, gn_len, outpre, '_gene_anir.tsv', precision)
-    _ = write_file(
-        intergene_tad, intergn_len, outpre, '_inter-gene_tad.tsv', precision
-        )
-    _ = write_file(
-        intergene_breadth, intergn_len, outpre,
-        '_inter-gene_breadth.tsv', precision
-        )
-    _ = write_file(
-        intergene_ani, intergn_len, outpre, '_inter-gene_anir.tsv', precision
-        )
-
-    return wgtad, wgbreadth, wgani, relabndc, total_metagenome_bp
-
-
-def operator(mtg, rgf, tbf, pgf, thd, tad, outpre, ncbi):
-    """ Runs the different functions and writes out results """
-
-    tadp = tad / 100
-    precision = 2 # number of decimals places to keep.
-
-    print(f'Using values {tad}% for TAD & {thd}% for ANIr')
-
-    print('Preparing base pair array for each contig in genome.')
-    rgf_tad, rgf_ani, rgf_len, wglen = read_genome_lengths(rgf)
-
-    print(
-        'Calculating coverage for each base pair position in genome.'
-        'This can take a while depending on the number of blast results.'
-        )
-    rgf_tad, rgf_ani = calc_genome_coverage(tbf, rgf_tad, rgf_ani, thd)
-
-    print('Writing Whole genome per base pair depth')
-    _ = write_genome_cov_by_bp(rgf_tad, outpre)
-
-    print('Retrieving coverage for each contig & gene')
-    (
-        gn_tad,
-        gn_ani,
-        gn_len,
-        intergn_tad,
-        intergn_ani,
-        intergn_len
-            ) = retrieve_gene_coverage(pgf, rgf_tad, rgf_ani)
-
-    print(f'Calculating {tad}% truncated average depth and {thd}% ANIr')
-    (
-        wgtad,
-        wgbreadth,
-        wgani,
-        relabndc,
-        total_metagenome_bp
-            ) = calc_tad_anir_relabndc(
-                                        mtg,
-                                        wglen,
-                                        rgf_tad,
-                                        rgf_ani,
-                                        rgf_len,
-                                        gn_tad,
-                                        gn_ani,
-                                        gn_len,
-                                        intergn_tad,
-                                        intergn_ani,
-                                        intergn_len,
-                                        tadp,
-                                        outpre,
-                                        precision
-                                        )
+    wganir = get_average(wg_anir, tad)
 
     wg_header = (
             f'Genome_Name\tTAD_{int(tad)}\tBreadth\tANIr_{int(thd)}\t'
@@ -539,11 +600,114 @@ def operator(mtg, rgf, tbf, pgf, thd, tad, outpre, ncbi):
         o.write(wg_header)
         o.write(wg_lineout)
 
-    print('\nScript seems to have finished successfully.\n')
-
     print('\nWhole Genome Values:\n')
     print(wg_header[:-1])
     print(wg_lineout[:-1])
+
+
+def operator(mtg, rgf, tbf, pgf, thd, tad, outpre, ncbi):
+    """ Runs the different functions and writes out results """
+
+    tadp = tad / 100
+    precision = 2 # number of decimals places to keep.
+
+    print(f'Using values {tad}% for TAD & {thd}% for ANIr')
+
+    print('\nPreparing base pair array for each contig in genome.')
+    rgf_tad, rgf_anir, rgf_len, wglen = read_genome_lengths(rgf)
+
+    print(
+        '\nCalculating coverage for each base pair position in genome. \n'
+        'This can take a while depending on the number of blast results.'
+        )
+    rgf_tad, rgf_anir = calc_genome_coverage(tbf, rgf_tad, rgf_anir, thd)
+
+    print('\nWriting read depth per base pair to file.')
+    _ = write_genome_cov_by_bp(rgf_tad, outpre)
+
+    ### Check for Prodigal or NCBI. #####################################
+    if pgf:
+        print(
+            '\nUsing Prodigal protein fasta.\n'
+            'Retrieving coverage for each contig & gene.'
+            )
+
+        (
+            gn_tad,
+            gn_anir,
+            gn_len,
+            intergn_tad,
+            intergn_anir,
+            intergn_len
+                ) = retrieve_prodigal_gene_coverage(pgf, rgf_tad, rgf_anir)
+
+        do_genes = True
+
+    elif ncbi:
+        print(
+            '\nUsing NCBI CDS from genomic FASTA.\n'
+            'Retrieving coverage for each contig & gene'
+            )
+
+        (
+            gn_tad,
+            gn_anir,
+            gn_len,
+            intergn_tad,
+            intergn_anir,
+            intergn_len
+                ) = retrieve_ncbi_gene_coverage(ncbi, rgf_tad, rgf_anir)
+
+        do_genes = True
+
+    else:
+        print(
+            '\n\n!! No gene prediction file entered.\n'
+            '!! NOT Calculating values by genes.\n'
+            '!! Calculating values for by contig and whole genome only.\n'
+            )
+
+        do_genes = False
+
+    ### End Predicted Gene File Check ###################################
+
+    print(f'\nCalculating {tad}% truncated average depth and {thd}% ANIr')
+
+    wg_tad, wg_anir = calc_contig_stats(
+                                    rgf_tad,
+                                    rgf_anir,
+                                    rgf_len,
+                                    tadp,
+                                    outpre,
+                                    precision
+                                    )
+
+    # Clear from memory
+    rgf_tad = None
+    rgf_anir = None
+    rgf_len = None
+
+    _ = calc_genome_stats(mtg, wg_tad, wg_anir, wglen, tadp, outpre, precision)
+
+    if do_genes == True:
+
+        _ = calc_gene_stats(gn_tad, gn_anir, gn_len, tadp, outpre, precision)
+
+        # Clear from memory
+        gn_tad = None
+        gn_anir = None
+        gn_len = None
+
+        _ = calc_intergene_stats(
+                                intergn_tad,
+                                intergn_anir,
+                                intergn_len,
+                                tadp,
+                                outpre,
+                                precision
+                                )
+
+    print('\nScript seems to have finished successfully.\n')
 
 
 def main():
@@ -579,8 +743,7 @@ def main():
         help='Use this option for for Prodigal gene prediction fasta!',
         metavar='',
         type=str,
-        required=False,
-        default=None
+        required=False
         )
     parser.add_argument(
         '-c', '--pIdent_threshold_cutoff',
@@ -606,13 +769,14 @@ def main():
     parser.add_argument(
         '-n', '--NCBI_CDS_genomic',
         help='Use this options for NCBI CDS from genomic FASTA file.',
-        action='store_true',
+        metavar='',
+        type=str,
         required=False
         )
     args=vars(parser.parse_args())
 
     # Do what you came here to do:
-    print('Running Script...')
+    print('\n\nRunning Script...\n')
     operator(
             args['metagenome_file'],
             args['ref_genome_file'],
@@ -623,6 +787,11 @@ def main():
             args['out_file_prefix'],
             args['NCBI_CDS_genomic']
             )
+
+    import os
+    import psutil
+    process = psutil.Process(os.getpid())
+    print(process.memory_info().rss)
 
 
 if __name__ == "__main__":

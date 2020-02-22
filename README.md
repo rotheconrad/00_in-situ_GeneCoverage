@@ -236,6 +236,7 @@ You can visualize your sequence identity distribution with a histogram using the
 python 03b_MagicBlast_pIdent_Hist.py -i uniqueID.blast
 ```
 
+Example Histogram Plot:
 ![alt text](03c_Example_plot.png "Example histogram plot.")
 
 Or you can use the [Enveomics collection](http://enve-omics.ce.gatech.edu/enveomics/index) to build a [recruitment plot](http://enve-omics.ce.gatech.edu/enveomics/docs?t=BlastTab.recplot2.R). There's even have a [GUI](http://enve-omics.ce.gatech.edu/enveomics/gui) to make things a bit easier.
