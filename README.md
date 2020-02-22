@@ -17,7 +17,7 @@ This workflow produces separate files in tab separated value (tsv) format for AN
 - It is the percent of base pairs recruited out of the total base pairs sequenced in the metagenome.
 
 #### ANIr is calculated as:
-- The average percent identity of sequence alignments for all reads (should be 1 blast match per read)
+- The average percent identity of sequence alignments for all reads that map above the user specified sequence identity threshold.
 
 #### This workflow leads to the following result files:
 
