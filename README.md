@@ -123,7 +123,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     shuf {outfile_name}.blast > {outfile_name}.shuf.blast
     ```
 
-4. Filter results for best hits
+4. Filter results for best hits.
 
     *Magic Blast will report multiple results per metagenomic read. For this analysis we only want to count each read once. Magic Blast will also report short sequence alignments of high identity. If a sequence alignment is 20 base pairs but the read is 150 base pairs this is considered to be a wrong match so we remove it. The -pml flag uses a ratio of alignment length / read length to identify results of this type. A value of 0.7, 0.8 or 0.9 is recommended.*
 
@@ -163,7 +163,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
     *If you forget the -parse_seqids flag it will cause errors later*
 
-4. Run Magic Blast
+4. Run Magic Blast.
 
     *For the outfile_name of the -out flag use the naming scheme of uniqueID_metagenomeID.blast where uniqueID is the unique identifier for your genome or MAG.*
 
@@ -171,19 +171,19 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     magicblast -query {metagenome_fasta} -db Combined_Genomes.fasta -infmt (fasta or fastq) -no_unaligned -splice F -outfmt tabular -parse_deflines T -out uniqueID_metagenomeID.blast
     ```
 
-5. Shuffle blast results
+5. Shuffle blast results.
 
     ```bash
     shuf uniqueID_metagenomeID.blast > uniqueID_metagenomeID.shuf.blast
     ```
 
-6. Filter results for best hits
+6. Filter results for best hits.
 
     ```bash
     python 01_MagicBlast_ShortRead_Filter.py -i uniqueID_metagenomeID.shuf.blast -pml 0.9 -rl 70
     ```
 
-6. De-concatenate
+6. De-concatenate.
 
     ```bash
     for file in *.fna
@@ -212,7 +212,7 @@ prodigal -i genomic_fasta.fna -o my.genes -a my.proteins.faa
 
 ## Step 03: Calculate ANIr and Coverage.
 
-*The scripts takes 1 uniqueID.blast file at a time with its corresponding metagenome, genomic fasta, and predicted genes files. For the outfile_prefix of the -o flag use the naming scheme of uniqueID_metagenomeID where uniqueID is the unique identifier for your genome or MAG.*
+*The script takes 1 uniqueID.blast file at a time with its corresponding metagenome, genomic fasta, and predicted genes files. For the outfile_prefix of the -o flag use the naming scheme of uniqueID_metagenomeID where uniqueID is the unique identifier for your genome or MAG.*
 
 ```bash
 python 03a_MagicBlast_CoverageMagic.py -m metagenomeID.fna -g uniqueID.fna -p my.proteins.faa -b uniqueID.blast -c 95 -d 80 -o uniqueID_metagenomeID (add -n if using NCBI Assembly files)
