@@ -85,7 +85,7 @@ python 01b_Fasta_rename_sequences.py -i metagenome_file_name.fastq -p metagenome
 
 ### Check sequence names in reference fasta files and rename if needed.
 
-*Magic Blast truncates sequences names at 50 characters. Prodigal appends the predicted gene number to end of the sequence names of the contigs. Depending on how many genes you have (2000-8000 typical for microbial genome) your sequence names need to leave enough room to retain the gene number. I typically assign short unique genome identifiers (uniqueID) to the file names of my genomic fasta files or MAGs. I then rename the contigs in each fasta file using this short uniqueID and the contig number like so: uniqueID_contigNumber. This can be accomplished with the following script:*
+*Magic Blast truncates sequences names at 50 characters. Prodigal appends the predicted gene number to the end of the sequence names of the contigs. Depending on how many genes you have (2000-8000 typical for microbial genome) your sequence names need to leave enough room to retain the gene number. I typically assign short unique genome identifiers (uniqueID) to the file names of my genomic fasta files or MAGs. I then rename the contigs in each fasta file using this short uniqueID and the contig number like so: uniqueID_contigNumber. This can be accomplished with the following script:*
 
 ```bash
 python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
@@ -134,7 +134,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
 ### Competitive read recruitment for multiple genomes or MAGs:
 
-1. Append a unique identifier to the beginning of the sequence name for all contigs in the genome or MAG files
+1. Append a unique identifier to the beginning of the sequence name for all contigs in the genome or MAG files if you have not done so already.
 
     Adjst the cut parameters to select a unique ID from your genomic fasta files to append to the begginging of your sequence names for each genome / MAG.
 
