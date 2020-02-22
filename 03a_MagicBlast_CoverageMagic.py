@@ -593,7 +593,7 @@ def calc_genome_stats(
             )
     wg_lineout = (
             f'{outpre}\t{wgtad:.{precision}f}\t{wgbreadth:.{precision}f}\t'
-            f'{wgani:.{precision}f}%\t'
+            f'{wganir:.{precision}f}%\t'
             f'{relabndc:.{precision}f}%\t{wglen}\t{total_metagenome_bp}\n'
             )
 
