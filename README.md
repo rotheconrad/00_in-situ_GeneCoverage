@@ -63,9 +63,9 @@ Information and installation instructions for Magic Blast can be found [here](ht
 ### Check metagenome read names and rename if needed. (fastq or fasta).
 *Magic Blast cuts the query name at the first space character and reports this as the query ID.*
 
->Fastq files can be named as:
->>@D00468:261:HYTMHBCX2:1:1101:9119:31637 1:N:0:CAGAGAGG+ACTGCATA
->>@D00468:261:HYTMHBCX2:1:1101:9119:31637 2:N:0:CAGAGAGG+ACTGCATA
+>Fastq files can be named as:  
+>@D00468:261:HYTMHBCX2:1:1101:9119:31637 1:N:0:CAGAGAGG+ACTGCATA  
+>@D00468:261:HYTMHBCX2:1:1101:9119:31637 2:N:0:CAGAGAGG+ACTGCATA  
 >where the unique identifier can come after the space chacter.
 
 *Filtering for best hit and retrieving the fasta sequence becomes impossible once the unique identifier is lost. Rename fastq files before running Magic Blast with fastq files. I typically assign a short unique sample name to my metagenome files (metagenomeID). I then rename the reads using this short metagenomeID and a read number like so: metagenomeID_readNumber. This can be accomplished using either script below depending if your reads are in fastq or fasta format.*
