@@ -171,7 +171,7 @@ def write_genome_cov_by_bp(rgf_tad, outpre):
                 counter += 1
 
 
-def get_strt_stp(location):
+def get_ncbi_strt_stp(location):
     """ Sorts out the NCBI CDS from genomic location nonsense """
 
     if len(location) == 1:
@@ -234,7 +234,7 @@ def retrieve_ncbi_gene_coverage(pgf, rgf_tad, rgf_ani):
             locus_tag = name.split('locus_tag=')[1].split(']')[0]
             location = name.split('location=')[1].split(']')[0].split('(')
 
-            p1, p2 = get_strt_stp(location)
+            p1, p2 = get_ncbi_strt_stp(location)
 
             strt = min(p1, p2) # start of CDS region
 
@@ -482,7 +482,9 @@ def write_file(in_d, len_d, outpre, outpost, precision):
             o.write(f'{k}\t{v:.{precision}f}\t{len_d[k]}\n')
 
 
-def calc_contig_stats(rgf_tad, rgf_ani, rgf_len, tad, outpre, precision):
+def calc_contig_stats(
+    rgf_tad, rgf_ani, rgf_len, tad, outpre, precision
+    ):
     """Calculate ANIr, TAD and breadth and write to files for Contigs"""
 
     print('... Calculating TADs for Contigs.')
@@ -510,7 +512,9 @@ def calc_contig_stats(rgf_tad, rgf_ani, rgf_len, tad, outpre, precision):
     return wg_tad, wg_ani
 
 
-def calc_gene_stats(gn_tad, gn_anir, gn_len, tad, outpre, precision):
+def calc_gene_stats(
+    gn_tad, gn_anir, gn_len, tad, outpre, precision
+    ):
     """Calculate ANIr, TAD and breadth and write to files for Genes"""
 
     print('... Calculating TADs for Genes')
@@ -535,13 +539,8 @@ def calc_gene_stats(gn_tad, gn_anir, gn_len, tad, outpre, precision):
 
 
 def calc_intergene_stats(
-                    intergn_tad,
-                    intergn_anir,
-                    intergn_len,
-                    tad,
-                    outpre,
-                    precision
-                    ):
+    intergn_tad, intergn_anir, intergn_len, tad, outpre, precision
+    ):
 
     """Calculate ANIr, TAD and breadth and write to Intergene files"""
 
@@ -573,7 +572,9 @@ def calc_intergene_stats(
     intergene_anir = None
 
 
-def calc_genome_stats(mtg, wg_tad, wg_anir, wglen, tad, outpre, precision):
+def calc_genome_stats(
+    mtg, wg_tad, wg_anir, wglen, tad, outpre, precision
+    ):
     """Calculate ANIr, TAD and breadth and writes to Genome files"""
 
     print('... Calculating TAD for Genome')
@@ -605,7 +606,9 @@ def calc_genome_stats(mtg, wg_tad, wg_anir, wglen, tad, outpre, precision):
     print(wg_lineout[:-1])
 
 
-def operator(mtg, rgf, tbf, pgf, thd, tad, outpre, ncbi):
+def operator(
+    mtg, rgf, tbf, pgf, thd, tad, outpre, ncbi
+    ):
     """ Runs the different functions and writes out results """
 
     tadp = tad / 100
@@ -632,14 +635,8 @@ def operator(mtg, rgf, tbf, pgf, thd, tad, outpre, ncbi):
             'Retrieving coverage for each contig & gene.'
             )
 
-        (
-            gn_tad,
-            gn_anir,
-            gn_len,
-            intergn_tad,
-            intergn_anir,
-            intergn_len
-                ) = retrieve_prodigal_gene_coverage(pgf, rgf_tad, rgf_anir)
+        gn_tad, gn_anir, gn_len, intergn_tad, intergn_anir, intergn_len = 
+                        retrieve_prodigal_gene_coverage(pgf, rgf_tad, rgf_anir)
 
         do_genes = True
 
@@ -649,14 +646,8 @@ def operator(mtg, rgf, tbf, pgf, thd, tad, outpre, ncbi):
             'Retrieving coverage for each contig & gene'
             )
 
-        (
-            gn_tad,
-            gn_anir,
-            gn_len,
-            intergn_tad,
-            intergn_anir,
-            intergn_len
-                ) = retrieve_ncbi_gene_coverage(ncbi, rgf_tad, rgf_anir)
+        gn_tad, gn_anir, gn_len, intergn_tad, intergn_anir, intergn_len = 
+                            retrieve_ncbi_gene_coverage(ncbi, rgf_tad, rgf_anir)
 
         do_genes = True
 
@@ -674,24 +665,23 @@ def operator(mtg, rgf, tbf, pgf, thd, tad, outpre, ncbi):
     print(f'\nCalculating {tad}% truncated average depth and {thd}% ANIr')
 
     wg_tad, wg_anir = calc_contig_stats(
-                                    rgf_tad,
-                                    rgf_anir,
-                                    rgf_len,
-                                    tadp,
-                                    outpre,
-                                    precision
-                                    )
+                    rgf_tad, rgf_anir, rgf_len, tadp, outpre, precision
+                    )
 
     # Clear from memory
     rgf_tad = None
     rgf_anir = None
     rgf_len = None
 
-    _ = calc_genome_stats(mtg, wg_tad, wg_anir, wglen, tadp, outpre, precision)
+    _ = calc_genome_stats(
+        mtg, wg_tad, wg_anir, wglen, tadp, thd, outpre, precision
+        )
 
     if do_genes == True:
 
-        _ = calc_gene_stats(gn_tad, gn_anir, gn_len, tadp, outpre, precision)
+        _ = calc_gene_stats(
+            gn_tad, gn_anir, gn_len, tadp, outpre, precision
+            )
 
         # Clear from memory
         gn_tad = None
@@ -699,13 +689,8 @@ def operator(mtg, rgf, tbf, pgf, thd, tad, outpre, ncbi):
         gn_len = None
 
         _ = calc_intergene_stats(
-                                intergn_tad,
-                                intergn_anir,
-                                intergn_len,
-                                tadp,
-                                outpre,
-                                precision
-                                )
+            intergn_tad, intergn_anir, intergn_len, tadp, outpre, precision
+            )
 
     print('\nScript seems to have finished successfully.\n')
 
