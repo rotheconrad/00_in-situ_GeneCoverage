@@ -635,8 +635,9 @@ def operator(
             'Retrieving coverage for each contig & gene.'
             )
 
-        gn_tad, gn_anir, gn_len, intergn_tad, intergn_anir, intergn_len = 
-                        retrieve_prodigal_gene_coverage(pgf, rgf_tad, rgf_anir)
+        (
+        gn_tad, gn_anir, gn_len, intergn_tad, intergn_anir, intergn_len
+            ) = retrieve_prodigal_gene_coverage(pgf, rgf_tad, rgf_anir)
 
         do_genes = True
 
@@ -646,8 +647,9 @@ def operator(
             'Retrieving coverage for each contig & gene'
             )
 
-        gn_tad, gn_anir, gn_len, intergn_tad, intergn_anir, intergn_len = 
-                            retrieve_ncbi_gene_coverage(ncbi, rgf_tad, rgf_anir)
+        (
+        gn_tad, gn_anir, gn_len, intergn_tad, intergn_anir, intergn_len
+            ) = retrieve_ncbi_gene_coverage(ncbi, rgf_tad, rgf_anir)
 
         do_genes = True
 
