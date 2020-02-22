@@ -573,7 +573,7 @@ def calc_intergene_stats(
 
 
 def calc_genome_stats(
-    mtg, wg_tad, wg_anir, wglen, tad, outpre, precision
+    mtg, wg_tad, wg_anir, wglen, tad, thd, outpre, precision
     ):
     """Calculate ANIr, TAD and breadth and writes to Genome files"""
 
