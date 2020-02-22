@@ -675,10 +675,6 @@ def operator(
     rgf_anir = None
     rgf_len = None
 
-    _ = calc_genome_stats(
-        mtg, wg_tad, wg_anir, wglen, tadp, thd, outpre, precision
-        )
-
     if do_genes == True:
 
         _ = calc_gene_stats(
@@ -693,6 +689,14 @@ def operator(
         _ = calc_intergene_stats(
             intergn_tad, intergn_anir, intergn_len, tadp, outpre, precision
             )
+
+        intergn_tad = None
+        intergn_anir = None
+        intergn_len = None
+
+    _ = calc_genome_stats(
+        mtg, wg_tad, wg_anir, wglen, tadp, thd, outpre, precision
+        )
 
     print('\nScript seems to have finished successfully.\n')
 
