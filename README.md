@@ -155,7 +155,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
 3. Make Magic Blast database.
 
-    *If you also have Blast+ installed on your system, make certain you are calling the makeblastdb program that comes with Magic Blast and not the version that comes with Blast+*
+    *If you also have Blast+ installed on your system, make certain you are calling the makeblastdb program that comes with Magic Blast and not the version that comes with Blast+ Try: which makeblastdb*
 
     ```bash
     makeblastdb -dbtype nucl -in Combined_Genomes.fasta -out Combined_Genoems.fasta -parse_seqids
