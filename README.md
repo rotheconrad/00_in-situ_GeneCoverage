@@ -69,7 +69,7 @@ Information and installation instructions for Magic Blast can be found [here](ht
 >    @D00468:261:HYTMHBCX2:1:1101:9119:31637 2:N:0:CAGAGAGG+ACTGCATA  
 >where the unique identifier comes after the white space chacter.
 
-*Filtering for best hit and retrieving the sequence becomes impossible once the unique identifier is lost. Rename fastq or fasta files before running Magic Blast. I typically assign a short unique sample name to my metagenome files (metagenomeID). I then rename the reads using this short metagenomeID and a read number like so: metagenomeID_readNumber. This can be accomplished using either script below depending if your reads are in fastq or fasta format.*
+*Filtering for best hit and retrieving the sequence becomes much more complicated and computationally intensive once the unique identifier is lost. Rename fastq or fasta files before running Magic Blast. I typically assign a short unique sample name to my metagenome files (metagenomeID). I then rename the reads using this short metagenomeID and a read number like so: metagenomeID_readNumber. This can be accomplished using either script below depending if your reads are in fastq or fasta format.*
 
 For fastq formatted metagenome read files:
 
