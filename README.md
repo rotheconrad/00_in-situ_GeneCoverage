@@ -51,19 +51,46 @@ conda activate prodigal
 conda install -c bioconda prodigal
 ```
 
+*If you're using files from the NCBI Assembly database you do not need Prodigal.*
 
 ### Magic Blast for short read metagenome mapping to reference genome(s) / MAG(s).
 
-Information and installation instructions for Magic Blast can be found [here](https://ncbi.github.io/magicblast/). The publication is [here](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-2996-x). NOTE: If the latest version of Magic Blast gives errors on your system, navigate to the parent directory try a previous version.
+Information and installation instructions for Magic Blast can be found [here](https://ncbi.github.io/magicblast/). The publication is [here](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-2996-x). NOTE: If the latest version of Magic Blast gives errors on your system, navigate to the parent directory and try a previous version.
 
 
 ## Step 01: Map metagenomic reads to reference genome(s) / MAG(s).
 
 ### Check metagenome read names and rename if needed. (fastq or fasta).
-*Need to add instructions*
+*Magic Blast cuts the query name at the first space character and reports this as the query ID.*
+
+>Fastq files can be named as:
+>@D00468:261:HYTMHBCX2:1:1101:9119:31637 1:N:0:CAGAGAGG+ACTGCATA
+>@D00468:261:HYTMHBCX2:1:1101:9119:31637 2:N:0:CAGAGAGG+ACTGCATA
+>where the unique identifier can come after the space chacter.
+
+*Filtering for best hit and retrieving the fasta sequence becomes impossible once the unique identifier is lost. Rename fastq files before running Magic Blast with fastq files. I typically assign a short unique sample name to my metagenome files (metagenomeID). I then rename the reads using this short metagenomeID and a read number like so: metagenomeID_readNumber. This can be accomplished using either script below depending if your reads are in fastq or fasta format.*
+
+For fastq formatted metagenome read files:
+
+```bash
+python 01a_Fastq_rename_sequences.py -i metagenome_file_name.fastq -p metagenomeID
+```
+
+For fasta formatted metagenome read files:
+
+```bash
+python 01b_Fasta_rename_sequences.py -i metagenome_file_name.fastq -p metagenomeID
+```
 
 ### Check sequence names in reference fasta files and rename if needed.
-*Need to add instructions*
+
+*Magic Blast truncates sequences names at 50 characters. Prodigal appends the predicted gene number to end of the sequence names of the contigs. Depending on how many genes you have (2000-8000 typical for microbial genome) your sequence names need to leave enough room to retain the gene number. I typically assign short unique genome identifiers (uniqueID) to the file names of my genomic fasta files or MAGs. I then rename the contigs in each fasta file using this short uniqueID and the contig number like so: uniqueID_contigNumber. This can be accomplished with the following script:*
+
+```bash
+python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
+```
+
+*genomic_fasta.fna can be complete or draft genomes or a MAG. Any genomic sequence you are using as your reference sequence.*
 
 ### For individual genome or MAG:
 
@@ -100,7 +127,7 @@ Information and installation instructions for Magic Blast can be found [here](ht
     *Magic Blast will report multiple results per metagenomic read. For this analysis we only want to count each read once. Magic Blast will also report short sequence alignments of high identity. If a sequence alignment is 20 base pairs but the read is 150 base pairs this is considered to be a wrong match so we remove it. The -pml flag uses a ratio of alignment length / read length to identify results of this type. A value of 0.7, 0.8 or 0.9 is recommended.*
 
     ```bash
-    python 01_MagicBlast_ShortRead_Filter.py -i {outfile_name}.shuf.blast -pml 0.9 -rl 70
+    python 01c_MagicBlast_ShortRead_Filter.py -i {outfile_name}.shuf.blast -pml 0.9 -rl 70
     ```
 
 
