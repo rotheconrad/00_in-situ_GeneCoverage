@@ -576,7 +576,7 @@ def main():
         )
     parser.add_argument(
         '-p', '--prodigal_protein_fasta',
-        help='Please specify the Prodigal protein fasta file!',
+        help='Use this option for for Prodigal gene prediction fasta!',
         metavar='',
         type=str,
         required=False,
@@ -604,11 +604,9 @@ def main():
         required=True
         )
     parser.add_argument(
-        '-n', '--NCBI_Assembly_files',
-        help='Pass this flag if using files from the NCBI Assembly database.',
-        metavar='',
+        '-n', '--NCBI_CDS_genomic',
+        help='Use this options for NCBI CDS from genomic FASTA file.',
         action='store_true',
-        type=str,
         required=False
         )
     args=vars(parser.parse_args())
@@ -623,7 +621,7 @@ def main():
             args['pIdent_threshold_cutoff'],
             args['truncated_avg_depth_value'],
             args['out_file_prefix'],
-            args['NCBI_Assembly_files']
+            args['NCBI_CDS_genomic']
             )
 
 

@@ -214,11 +214,17 @@ prodigal -i genomic_fasta.fna -o my.genes -a my.proteins.faa
 
 *The script takes 1 uniqueID.blast file at a time with its corresponding metagenome, genomic fasta, and predicted genes files. For the outfile_prefix of the -o flag use the naming scheme of uniqueID_metagenomeID where uniqueID is the unique identifier for your genome or MAG.*
 
+If using NCBI Assembly Files:
 ```bash
-python 03a_MagicBlast_CoverageMagic.py -m metagenomeID.fna -g uniqueID.fna -p my.proteins.faa -b uniqueID.blast -c 95 -d 80 -o uniqueID_metagenomeID (add -n if using NCBI Assembly files)
+python 03a_MagicBlast_CoverageMagic.py -m metagenomeID.fna -g uniqueID_genomic_FASTA.fna -n uniqueID_CDS_from_genomic_FASTA.fna -b uniqueID.blast -c 95 -d 80 -o uniqueID_metagenomeID
 ```
 
-*If using Genomic FASTA and CDS from genomic FASTA files retrieved from the NCBI assembly database, the Genomic FASTA goes to the -g flag and CDS from genomic FASTA goes to the -p flag replacing the my.proteins.faa file from Prodigal.*
+If using prodigal:
+```bash
+python 03a_MagicBlast_CoverageMagic.py -m metagenomeID.fna -g uniqueID.fna -p my.proteins.faa -b uniqueID.blast -c 95 -d 80 -o uniqueID_metagenomeID
+```
+
+*If using Genomic FASTA and CDS from genomic FASTA files retrieved from the NCBI assembly database, the Genomic FASTA goes to the -g flag and CDS from genomic FASTA goes to the -n flag. If using Prodigal, the my.proteins.faa file goes to the -p flag and the genomic reference goes to the -g flag.*
 
 The -d flag is for the truncated average value or TAD parameter. A value of 100 will return results without truncation.
 
