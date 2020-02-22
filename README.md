@@ -220,6 +220,8 @@ python 03a_MagicBlast_CoverageMagic.py -m metagenomeID.fna -g uniqueID.fna -p my
 
 *If using Genomic FASTA and CDS from genomic FASTA files retrieved from the NCBI assembly database, the Genomic FASTA goes to the -g flag and CDS from genomic FASTA goes to the -p flag replacing the my.proteins.faa file from Prodigal.*
 
+The -d flag is for the truncated average value or TAD parameter. A value of 100 will return results without truncation.
+
 The -c flag is a cutoff threshold for the percent identity of the metagenomic read alignments to the genomic reference. Sequence discontinuity gaps for sequence discrete populations are generally observed around 95% percent sequence identity. This is a good starting point, but depending on your target population you may want to increase or decrease this value. Looking at the distribution of percent identity values or a recruitment plot is a great way to investigate the sequence discontinuity for your population of interest.
 
 You can visualize your sequence identity distribution with a histogram using the following:
@@ -230,9 +232,8 @@ python 03b_MagicBlast_pIdent_Hist.py -i uniqueID.blast
 
 ![alt text](03c_Example_plot.png "Example histogram plot.")
 
-Or you can use the [Enveonmics collection](http://enve-omics.ce.gatech.edu/enveomics/index) to build a [recruitment plot](http://enve-omics.ce.gatech.edu/enveomics/docs?t=BlastTab.recplot2.R). There's even have a [GUI](http://enve-omics.ce.gatech.edu/enveomics/gui) to make things a bit easier.
+Or you can use the [Enveomics collection](http://enve-omics.ce.gatech.edu/enveomics/index) to build a [recruitment plot](http://enve-omics.ce.gatech.edu/enveomics/docs?t=BlastTab.recplot2.R). There's even have a [GUI](http://enve-omics.ce.gatech.edu/enveomics/gui) to make things a bit easier.
 
-The -d flag is for the truncated average value or TAD parameter. A value of 100 will return results without truncation.
 
 ## Step 04: Generate summary plots.
 
