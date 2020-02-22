@@ -10,7 +10,7 @@ This workflow produces separate files in tab separated value (tsv) format for AN
 - Set TAD to 100 for no truncatation.
 
 #### Coverage calculated as Breadth:
-- number of positions in reference sequence covered by at least one read alignment divided the length of the reference sequence.
+- The number of positions in the reference sequence covered by at least one read alignment divided by the length of the reference sequence.
 
 #### Relative Abundance is calculated as:
 - base pairs recruited / base pairs in metagenome * 100
