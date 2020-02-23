@@ -4,6 +4,12 @@ This workflow produces separate files in tab separated value (tsv) format for AN
 
 *This workflow can also be used with Genomic FASTA and CDS from genomic FASTA files retrieved from the [NCBI assembly database](https://www.ncbi.nlm.nih.gov/assembly/). In this case, skip the renaming step for sequence names in the reference fasta file in Step 01 and skip all of Step 02. Use the -n flag for NCBI in Step 03.*
 
+All of the Python scripts in this repository are written for Python version 3.6+. They can be executed and help output obtained by entering:
+
+```bash
+python scriptname.py -h
+```
+
 #### Coverage calculated as Truncated Average Depth (TAD):
 - TAD 80 removes the top 10% and bottom 10% of base pair depths and caluclates coverage from the middle 80% of values. Intended to reduce effects of conserved motif peaks and contig edge valleys.
 - Coverage = base pairs recruited / length of genome, contig, intergenic region, or gene
