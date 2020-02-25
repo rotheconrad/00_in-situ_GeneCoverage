@@ -195,11 +195,15 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
 5. Shuffle blast results.
 
+    *The Magic Blast results are output in an ordered format. The filter script keeps the first best match which will bias the results. Using the blast command shuf will randomize the order of the Magic Blast results file to prevent this bias.*
+
     ```bash
     shuf uniqueID_metagenomeID.blast > uniqueID_metagenomeID.shuf.blast
     ```
 
 6. Filter results for best hits.
+
+    *Magic Blast will report multiple results per metagenomic read. For this analysis we only want to count each read once. Magic Blast will also report short sequence alignments of high identity. If a sequence alignment is 20 base pairs but the read is 150 base pairs this is considered to be a wrong match so we remove it. The -pml flag uses a ratio of alignment length / read length to identify results of this type. A value of 0.7, 0.8 or 0.9 is recommended.*
 
     ```bash
     # To Display the program description and parameter files
@@ -210,6 +214,8 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     ```
 
 6. De-concatenate.
+
+    *Now we want to retrieve the results for each genome or MAG from the concatenated results.*
 
     ```bash
     for file in *.fna
