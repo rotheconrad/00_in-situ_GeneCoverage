@@ -62,9 +62,9 @@ def gather_data(gtd, outfile):
             ####### ADJUST THIS BLOCK FOR YOUR FILE NAMING SCHEME #######
             #############################################################
             file_basename = X[0].split('/')[-1].split('_')
-            smpl = '_'.join(file_basename[:2])
+            smpl = file_basename[0]
             sample_dict[smpl] = ''
-            genome = file_basename[2]
+            genome = file_basename[1]
             #############################################################
             #############################################################
 
