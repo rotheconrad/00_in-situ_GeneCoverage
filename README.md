@@ -80,6 +80,10 @@ Information and installation instructions for Magic Blast can be found [here](ht
 For fastq formatted metagenome read files:
 
 ```bash
+# To Display the program discription and parameter files
+python 01a_Fastq_rename_sequences.py -h
+
+# Example execution:
 python 01a_Fastq_rename_sequences.py -i metagenome_file_name.fastq -p metagenomeID
 ```
 
