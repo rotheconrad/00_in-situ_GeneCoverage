@@ -135,7 +135,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
 3. Shuffle blast results.
 
-    *The Magic Blast results are output in an ordered format. The filter script keeps the first best match which will bias the results. Using the blast command shuf will randomize the order of the Magic Blast results file to prevent this bias.*
+    *The Magic Blast results are output in an ordered format. The filter script keeps the first best match which will bias the best match selection of tied results to the first match. Using the blast command shuf will randomize the order of the Magic Blast results file to prevent this bias.*
 
     ```bash
     shuf {outfile_name}.blast > {outfile_name}.shuf.blast
@@ -195,7 +195,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
 5. Shuffle blast results.
 
-    *The Magic Blast results are output in an ordered format. The filter script keeps the first best match which will bias the results. Using the blast command shuf will randomize the order of the Magic Blast results file to prevent this bias.*
+    *The Magic Blast results are output in an ordered format. The filter script keeps the first best match which will bias the best match selection of tied results to the first match. Using the blast command shuf will randomize the order of the Magic Blast results file to prevent this bias.*
 
     ```bash
     shuf uniqueID_metagenomeID.blast > uniqueID_metagenomeID.shuf.blast
