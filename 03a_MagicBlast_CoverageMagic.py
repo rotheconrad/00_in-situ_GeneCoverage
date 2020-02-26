@@ -588,7 +588,7 @@ def calc_genome_stats(
     wganir = get_average(wg_anir, tad)
 
     wg_header = (
-            f'Genome_Name\tTAD_{int(tad)}\tBreadth\tANIr_{int(thd)}\t'
+            f'Genome_Name\tTAD_{tad*100}\tBreadth\tANIr_{int(thd)}\t'
             f'Relative_Abundance(%)\tGenome_Length(bp)\tMetagenome_Length(bp)\n'
             )
     wg_lineout = (
