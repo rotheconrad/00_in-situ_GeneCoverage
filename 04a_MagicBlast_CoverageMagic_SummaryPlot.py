@@ -135,7 +135,7 @@ def parse_files(gbp, cani, ctad, gani, gtad):
     return d
 
 
-def plot_ANIr_TAD(d, tad, thd, outfile):
+def plot_ANIr_TAD(d, tad, thd, outfile, ymax):
     """ Takes d from parse_files function and plots the data """
 
     # Caculate Correlations
@@ -162,6 +162,9 @@ def plot_ANIr_TAD(d, tad, thd, outfile):
         f'Pearson r: {round(v_gtad_corr[0], 3)}, '
         f'p={round(v_gtad_corr[1], 3)}'
         )
+
+    print(ctad_corr)
+    print(gtad_corr)
 
     print('Plotting...')
     # Set the colors
@@ -251,7 +254,7 @@ def plot_ANIr_TAD(d, tad, thd, outfile):
     # Correlation Text
     ax4.text(
         0.99, 0.96,
-        cani_corr,
+        ctad_corr,
         verticalalignment='top',
         horizontalalignment='right',
         transform=ax4.transAxes,
@@ -259,7 +262,7 @@ def plot_ANIr_TAD(d, tad, thd, outfile):
         )
     ax6.text(
         0.99, 0.96,
-        gani_corr,
+        gtad_corr,
         verticalalignment='top',
         horizontalalignment='right',
         transform=ax6.transAxes,
@@ -267,7 +270,7 @@ def plot_ANIr_TAD(d, tad, thd, outfile):
         )
     ax8.text(
         0.99, 0.04,
-        ctad_corr,
+        cani_corr,
         verticalalignment='bottom',
         horizontalalignment='right',
         transform=ax8.transAxes,
@@ -275,7 +278,7 @@ def plot_ANIr_TAD(d, tad, thd, outfile):
         )
     ax10.text(
         0.99, 0.04,
-        gtad_corr,
+        gani_corr,
         verticalalignment='bottom',
         horizontalalignment='right',
         transform=ax10.transAxes,
@@ -405,6 +408,7 @@ def plot_ANIr_TAD(d, tad, thd, outfile):
     ax9.set_xlim(left=-5, right=d['ani_gxs']+5)
     ax10.set_xlim(left=-5, right=max(d['aniglens'])+5)
 
+    if ymax: ax1.set_ylim(bottom=-5, top=ymax)
     ax7.set_ylim(bottom=thd-0.5, top=100.5)
 
     # adjust layout, save, and close
@@ -443,6 +447,13 @@ def main():
         type=float,
         required=True
         )
+    parser.add_argument(
+        '-ymax', '--yaxis_maximum',
+        help='Set the y-axis maximum for sequence depth plots (optional).',
+        metavar=':',
+        type=float,
+        required=False
+        )
     args=vars(parser.parse_args())
 
     # Do what you came here to do:
@@ -461,7 +472,8 @@ def main():
                     d,
                     args['truncated_avg_depth_value'],
                     args['pIdent_threshold_cutoff'],
-                    out_file
+                    out_file,
+                    args['yaxis_maximum']
                     )
 
 
