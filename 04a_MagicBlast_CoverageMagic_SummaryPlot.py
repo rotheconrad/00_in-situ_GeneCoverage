@@ -163,9 +163,6 @@ def plot_ANIr_TAD(d, tad, thd, outfile, ymax):
         f'p={round(v_gtad_corr[1], 3)}'
         )
 
-    print(ctad_corr)
-    print(gtad_corr)
-
     print('Plotting...')
     # Set the colors
     gbp_color = '#4d4d4d'
