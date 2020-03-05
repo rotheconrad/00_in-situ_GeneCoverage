@@ -118,7 +118,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     *If you also have Blast+ installed on your system, make certain you are calling the makeblastdb program that comes with Magic Blast and not the version that comes with Blast+. Try: which makeblastdb*
 
     ```bash
-    makeblastdb -dbtype nucl -in Combined_Genomes.fasta -out Combined_Genoems.fasta -parse_seqids
+    makeblastdb -dbtype nucl -in Ref_Genome.fasta -out Ref_Genome.fasta -parse_seqids
     ```
 
     *If you forget the -parse_seqids flag it will cause errors later.*
@@ -128,10 +128,10 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     *For the outfile_name of the -out flag use the naming scheme of uniqueID_metagenomeID.blast where uniqueID is the unique identifier for your genome or MAG.*
 
     ```bash
-    magicblast -query {metagenome_fasta} -db Combined_Genomes.fasta -infmt (fasta or fastq) -no_unaligned -splice F -outfmt tabular -parse_deflines T -out {outfile_name}.blast
+    magicblast -query {metagenome_fasta} -db Ref_Genome.fasta -infmt (fasta or fastq) -no_unaligned -splice F -outfmt tabular -parse_deflines T -out {outfile_name}.blast
     ```
 
-    *If you forget to set the 0parse_deflines flag to true it will cause errors later.*
+    *If you forget to set the -parse_deflines flag to true it will cause errors later.*
 
 3. Shuffle blast results.
 
@@ -187,11 +187,19 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
 4. Run Magic Blast.
 
+    Magic Blast has the ability to keep track of [paired reads](https://ncbi.github.io/magicblast/cook/paired.html) using the option -paired or -query_mate which it reports in column 23 of the [tabular output](https://ncbi.github.io/magicblast/doc/output.html). It is possible for a read pair to align to separate genomes or MAGs in a competitive read recruitment which can cause an issue when using grep to de-concatenate like the example in (7) below. However, for coverage calculations it is not necessary to keep track of paired reads. The forward and reverse reads can be combined into a single file and run through Magic Blast as a single -query file. If you run Magic Blast using a paired option, you will need to use awk or some other method to de-concatenate your competitive blast selecting only the 1st column of the tabular output otherwise information in column 23 can cause errors downstream.
+
+    ```bash
+    cat readpair1.fastq readpair2.fast[aq] > combined_reads.fast[aq]
+    ```
+
     *For the outfile_name of the -out flag use the naming scheme of uniqueID_metagenomeID.blast where uniqueID is the unique identifier for your genome or MAG.*
 
     ```bash
-    magicblast -query {metagenome_fasta} -db Combined_Genomes.fasta -infmt (fasta or fastq) -no_unaligned -splice F -outfmt tabular -parse_deflines T -out uniqueID_metagenomeID.blast
+    magicblast -query combined_reads.fast[aq] -db Combined_Genomes.fasta -infmt (fasta or fastq) -no_unaligned -splice F -outfmt tabular -parse_deflines T -out uniqueID_metagenomeID.blast
     ```
+
+    *If you forget to set the -parse_deflines flag to true it will cause errors later.*
 
 5. Shuffle blast results.
 
@@ -213,7 +221,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     python 01_MagicBlast_ShortRead_Filter.py -i uniqueID_metagenomeID.shuf.blast -pml 0.9 -rl 70
     ```
 
-6. De-concatenate.
+7. De-concatenate.
 
     *Now we want to retrieve the results for each genome or MAG from the concatenated results.*
 
