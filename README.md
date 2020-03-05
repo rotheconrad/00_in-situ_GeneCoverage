@@ -13,6 +13,10 @@ python scriptname.py -h
 #### Coverage calculated as Truncated Average Depth (TAD):
 - TAD 80 removes the top 10% and bottom 10% of base pair depths and caluclates coverage from the middle 80% of values. Intended to reduce effects of conserved motif peaks and contig edge valleys.
 - Coverage = base pairs recruited / length of genome, contig, intergenic region, or gene
+- The TAD value for the \*_genome.tsv file (which is also printed to the screen while running the script) is calculated by base pair for all positions in the reference genome or MAG. The genes are ignored at this level and the calculation includes inter-genic regions. The sequencing depth of each base pair position is calculated, the values are numerically sorted, and for TAD 80 the top 10% and bottom 10% of sequence depth values are removed. Then, the average sequencing depth is calculated from the remaining base pair positions.
+- For the \*_contig_tad.tsv file this same process is repeated but for each contig in the reference genome or MAG instead of the entire genome.
+- For the \*_gene_tad.tsv file this same process is repeated but for each genic region in the Prodigal or CDS from genomic FASTA file.
+- For the \*_intergene_tad.tsv file this same process is repeated but for each region between sequences outlined in the Prodigal or CDS from genomic FASTA file.
 - Set TAD to 100 for no truncatation.
 
 #### Coverage calculated as Breadth:
