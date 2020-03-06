@@ -230,7 +230,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     *Now we want to retrieve the results for each genome or MAG from the concatenated results.*
 
     First, compile a list of the unique genome or MAG IDs:
-    
+
     ```bash
     for file in *.fna
         do
@@ -266,7 +266,7 @@ As per the Prodigal documentation, Prodigal can be easily run like this:
 prodigal -i genomic_fasta.fna -o my.genes -a my.proteins.faa
 ```
 
-*We only care about the my.proteins.faa file for the purpose of this pipeline.*
+*We only care about the my.proteins.faa file for the purpose of this pipeline but it can also be handy to use the -f and -d flags at the same time to generate additional file types for use later.*
 
 
 ## Step 03: Calculate ANIr and Coverage.
