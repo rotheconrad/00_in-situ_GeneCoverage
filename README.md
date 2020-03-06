@@ -2,7 +2,7 @@
 
 This workflow produces separate files in tab separated value (tsv) format for ANIr, sequence depth, and sequence breadth for the genes, intergenic regions, and contigs of a genome / MAG in fasta format. It also produces a file containing sequence depth at each position of the genome as well as a file with results calculated for the whole genome sequence. tsv files can be easily opened in Excel, imported into Python with Pandas, or read into R for further analysis. There is also an option to generate some summary plots or construct a Data Table with whole genome results for multiple genomes / MAGs across many metagenome samples.
 
-*This workflow can also be used with Genomic FASTA and CDS from genomic FASTA files retrieved from the [NCBI assembly database](https://www.ncbi.nlm.nih.gov/assembly/). In this case, skip the renaming step for sequence names in the reference fasta file in Step 01 and skip all of Step 02. Use the -n flag for NCBI in Step 03.*
+*Additionally, this workflow can be used with Genomic FASTA and CDS from genomic FASTA files retrieved from the [NCBI assembly database](https://www.ncbi.nlm.nih.gov/assembly/). In this case, skip the renaming step for sequence names in the reference fasta file in Step 01 and skip all of Step 02. Use the -n flag for NCBI in Step 03.*
 
 All of the Python scripts in this repository are written for Python version 3.6+. They can be executed and help output obtained by entering:
 
@@ -282,7 +282,7 @@ python 03a_MagicBlast_CoverageMagic.py -h
 python 03a_MagicBlast_CoverageMagic.py -m metagenomeID.fna -g uniqueID_genomic_FASTA.fna -n uniqueID_CDS_from_genomic_FASTA.fna -b uniqueID.blast -c 95 -d 80 -o uniqueID_metagenomeID
 ```
 
-If using prodigal:
+If using Prodigal:
 ```bash
 # To Display the program description and parameter files
 python 03a_MagicBlast_CoverageMagic.py -h
