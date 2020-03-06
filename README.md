@@ -229,13 +229,19 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
     *Now we want to retrieve the results for each genome or MAG from the concatenated results.*
 
+    First, compile a list of the unique genome or MAG IDs:
+    
     ```bash
     for file in *.fna
         do
             uniqueID=`basename $file | cut -d _ -f 1`
             echo ${uniqueID} >> uniqueID_list.txt
         done
+    ```
 
+    Then we iterate through the list of unique IDs and place all the blast matches with that ID in new files:
+
+    ```bash
     while read uniqueID
         do
             grep ${uniqueID} uniqueID_metagenomeID.fltrdBstHts.blst >> ${uniqueID}.blast
