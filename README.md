@@ -247,7 +247,6 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     ```bash
     while read uniqueID
         do
-
             awk -F '\t' '$2 ~ /$uniqueID/' uniqueID_metagenomeID.fltrdBstHts.blst >> ${uniqueID}.blast
         done < uniqueID_list.txt
     ```
