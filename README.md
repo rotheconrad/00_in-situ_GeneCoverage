@@ -191,7 +191,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
 4. Run Magic Blast.
 
-    Magic Blast has the ability to keep track of [paired reads](https://ncbi.github.io/magicblast/cook/paired.html) using the option -paired or -query_mate which it reports in column 23 of the [tabular output](https://ncbi.github.io/magicblast/doc/output.html). It is possible for a read pair to align to separate genomes or MAGs in a competitive read recruitment which can cause an issue when using grep to de-concatenate like the example in (7) below. However, for coverage calculations it is not necessary to keep track of paired reads. The forward and reverse reads can be combined into a single file and run through Magic Blast as a single -query file. If you run Magic Blast using a paired option, you will need to use awk or some other method to de-concatenate your competitive blast selecting only the 1st column of the tabular output otherwise information in column 23 can cause errors downstream.
+    Magic Blast has the ability to keep track of [paired reads](https://ncbi.github.io/magicblast/cook/paired.html) using the option -paired or -query_mate which it reports in column 23 of the [tabular output](https://ncbi.github.io/magicblast/doc/output.html). It is possible for a read pair to align to separate genomes or MAGs in a competitive read recruitment which can cause an issue when using grep to de-concatenate like the example in (7) below. However, for coverage calculations it is not necessary to keep track of paired reads. The forward and reverse reads can be combined into a single file and run through Magic Blast as a single -query file. If you run Magic Blast using a paired option, you will need to use awk or some other method to de-concatenate your competitive blast selecting only the 2nd column of the tabular output otherwise information in column 23 can cause errors downstream.
 
     ```bash
     cat readpair1.fastq readpair2.fast[aq] > combined_reads.fast[aq]
@@ -233,12 +233,22 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     for file in *.fna
         do
             uniqueID=`basename $file | cut -d _ -f 1`
-            echo $uniqueID >> uniqueID_list.txt
+            echo ${uniqueID} >> uniqueID_list.txt
         done
 
     while read uniqueID
         do
-            grep $uniqueID uniqueID_metagenomeID.fltrdBstHts.blst >> uniqueID.blast
+            grep ${uniqueID} uniqueID_metagenomeID.fltrdBstHts.blst >> ${uniqueID}.blast
+        done < uniqueID_list.txt
+    ```
+
+    *Another method that works even if you ran Magic Blast with paired option*
+
+    ```bash
+    while read uniqueID
+        do
+
+            awk -F '\t' '$2 ~ /$uniqueID/' uniqueID_metagenomeID.fltrdBstHts.blst >> ${uniqueID}.blast
         done < uniqueID_list.txt
     ```
 
