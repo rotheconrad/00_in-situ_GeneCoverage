@@ -46,14 +46,20 @@ python scriptname.py -h
     - \{out_file_prefix\}_intergene_anir.tsv
 
 
-## Step 00: Required tools :: Prodigal and Magic Blast.
+## Step 00: Required tools :: Python 3.6+, Prodigal and Magic Blast.
 
+
+### Python 3.6+ for running the Python scripts in this repo.
+
+Information for installing and running Python can be found [here](https://www.python.org/). I recommend installing [mini conda](https://docs.conda.io/en/latest/miniconda.html) first and then creating an environment for Python 3.6+ and other tools for the project at hand.
+
+*All Python scripts in this repo were written for Python 3.6+. If you get a syntax error the first time you run a script, please first check your Python version.*
 
 ### Prodigal for protein coding gene prediction.
  
 Information and installation instructions for Prodigal can be found [here](https://github.com/hyattpd/Prodigal). The publication is [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2848648/).
 
-Prodigal can also be installed with a [conda environment]():
+Prodigal can also be installed with a [conda environment](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html):
 
 ```bash
 conda create -n prodigal
