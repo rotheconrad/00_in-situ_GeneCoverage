@@ -146,17 +146,19 @@ def main():
         )
     parser.add_argument(
         '-pml', '--percent_match_length',
-        help='Percent match length to filter for (ex: 0.9).',
+        help='(Optional) Percent match length to filter for (Default = 0.9).',
         metavar='',
         type=float,
-        required=True
+        required=False,
+        default=0.9
         )
     parser.add_argument(
         '-rl', '--read_length',
-        help='Read length to filter for (ex: 70).',
+        help='(Optional) Read length to filter for (Default = 70).',
         metavar='',
         type=float,
-        required=True
+        required=False,
+        default=70
         )
     args=vars(parser.parse_args())
 

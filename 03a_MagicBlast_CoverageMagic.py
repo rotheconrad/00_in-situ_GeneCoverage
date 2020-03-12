@@ -126,7 +126,7 @@ def read_genome_lengths(rgf):
     return rgf_tad, rgf_ani, rgf_len, wg_len
 
 
-def calc_genome_coverage(tbf, rgf_tad, rgf_ani, thrshld):
+def calc_genome_coverage(tbf, rgf_tad, rgf_ani, lthd, uthd):
     """ Reads tabblast file and adds coverage by genome position """
 
     read_count = 0
@@ -134,7 +134,7 @@ def calc_genome_coverage(tbf, rgf_tad, rgf_ani, thrshld):
         for l in f:
             # Progress Tracker
             if read_count % 50000 == 0:
-                print(f'... Blast matches processed: {read_count:013}')
+                print(f'... Blast matches processed ... {read_count:013}')
             read_count += 1
 
             # Skip magic blast header
@@ -151,10 +151,12 @@ def calc_genome_coverage(tbf, rgf_tad, rgf_ani, thrshld):
             # coverage of +1 to each basepair position for length of
             # read alignment along the subject sequence.
 
-            if pident >= thrshld:
+            if pident > lthd and pident < uthd:
                 for i in range(strt, stp+1, 1):
                     rgf_tad[contig_name][i] += 1
                     rgf_ani[contig_name][i].append(pident)
+
+    print(f'... Total Blast matches process: {read_count:013}')
 
     return rgf_tad, rgf_ani
 
@@ -573,7 +575,7 @@ def calc_intergene_stats(
 
 
 def calc_genome_stats(
-    mtg, wg_tad, wg_anir, wglen, tad, thd, outpre, precision
+    mtg, wg_tad, wg_anir, wglen, tad, lthd, uthd, outpre, precision
     ):
     """Calculate ANIr, TAD and breadth and writes to Genome files"""
 
@@ -588,7 +590,7 @@ def calc_genome_stats(
     wganir = get_average(wg_anir, tad)
 
     wg_header = (
-            f'Genome_Name\tTAD_{tad*100}\tBreadth\tANIr_{int(thd)}\t'
+            f'Genome_Name\tTAD_{tad*100}\tBreadth\tANIr_{lthd}-{uthd}\t'
             f'Relative_Abundance(%)\tGenome_Length(bp)\tMetagenome_Length(bp)\n'
             )
     wg_lineout = (
@@ -607,14 +609,16 @@ def calc_genome_stats(
 
 
 def operator(
-    mtg, rgf, tbf, pgf, thd, tad, outpre, ncbi
+    mtg, rgf, tbf, pgf, lthd, uthd, tad, outpre, ncbi
     ):
     """ Runs the different functions and writes out results """
 
     tadp = tad / 100
     precision = 2 # number of decimals places to keep.
 
-    print(f'Using values {tad}% for TAD & {thd}% for ANIr')
+    print(
+        f'Using values {tad}% for TAD & {lthd}%, {uthd}% for pIdent Threshold'
+        )
 
     print('\nPreparing base pair array for each contig in genome.')
     rgf_tad, rgf_anir, rgf_len, wglen = read_genome_lengths(rgf)
@@ -623,7 +627,7 @@ def operator(
         '\nCalculating coverage for each base pair position in genome. \n'
         'This can take a while depending on the number of blast results.'
         )
-    rgf_tad, rgf_anir = calc_genome_coverage(tbf, rgf_tad, rgf_anir, thd)
+    rgf_tad, rgf_anir = calc_genome_coverage(tbf, rgf_tad, rgf_anir, lthd, uthd)
 
     print('\nWriting read depth per base pair to file.')
     _ = write_genome_cov_by_bp(rgf_tad, outpre)
@@ -664,7 +668,10 @@ def operator(
 
     ### End Predicted Gene File Check ###################################
 
-    print(f'\nCalculating {tad}% truncated average depth and {thd}% ANIr')
+    print(
+        f'\nCalculating {tad}% truncated average depth '
+        f'and {lthd}%, {uthd}% ANIr'
+        )
 
     wg_tad, wg_anir = calc_contig_stats(
                     rgf_tad, rgf_anir, rgf_len, tadp, outpre, precision
@@ -695,7 +702,7 @@ def operator(
         intergn_len = None
 
     _ = calc_genome_stats(
-        mtg, wg_tad, wg_anir, wglen, tadp, thd, outpre, precision
+        mtg, wg_tad, wg_anir, wglen, tadp, lthd, uthd, outpre, precision
         )
 
     print('\nScript seems to have finished successfully.\n')
@@ -711,56 +718,70 @@ def main():
     parser.add_argument(
         '-m', '--metagenome_file',
         help='Please specify the query metagenome fasta file!',
-        metavar='',
+        #metavar='',
         type=str,
         required=True
         )
     parser.add_argument(
         '-g', '--ref_genome_file',
         help='Please specify the genome fasta file!',
-        metavar='',
+        #metavar='',
         type=str,
         required=True
         )
     parser.add_argument(
         '-b', '--tabular_blast_file',
         help='Please specify the tabular blast file!',
-        metavar='',
+        #metavar='',
         type=str,
         required=True
         )
     parser.add_argument(
         '-p', '--prodigal_protein_fasta',
         help='Use this option for for Prodigal gene prediction fasta!',
-        metavar='',
+        #metavar='',
         type=str,
         required=False
         )
     parser.add_argument(
-        '-c', '--pIdent_threshold_cutoff',
-        help='Please specify pIdent threshold to use! (ie: 95)',
-        metavar='',
+        '-c', '--pIdent_threshold_lower',
+        help=
+            '(Optional) Lower percent sequence identity of reads to include '
+            'coverage calculations (Default = 94.99). [pIdent > value].',
+        #metavar='',
         type=float,
-        required=True
+        required=False,
+        default=94.99
+        )
+    parser.add_argument(
+        '-u', '--pIdent_threshold_upper',
+        help=
+            '(Optional) Upper percent sequence identity of reads to include '
+            'coverage calculations (Default = 100.01). [pIdent < value].',
+        #metavar='',
+        type=float,
+        required=False,
+        default=100.01
         )
     parser.add_argument(
         '-d', '--truncated_avg_depth_value',
-        help='Please specify TAD value! (ie: 80 or 90)',
-        metavar='',
+        help='(Optional) Specify a different TAD value! (Default = 80)',
+        #metavar='',
         type=float,
-        required=True
+        required=False,
+        default=80
         )
     parser.add_argument(
         '-o', '--out_file_prefix',
         help='What do you like the output file prefix to be?',
-        metavar='',
+        #metavar='',
         type=str,
         required=True
         )
     parser.add_argument(
         '-n', '--NCBI_CDS_genomic',
         help='Use this options for NCBI CDS from genomic FASTA file.',
-        metavar='',
+        #metavar='',
         type=str,
         required=False
         )
@@ -773,7 +794,8 @@ def main():
             args['ref_genome_file'],
             args['tabular_blast_file'],
             args['prodigal_protein_fasta'],
-            args['pIdent_threshold_cutoff'],
+            args['pIdent_threshold_lower'],
+            args['pIdent_threshold_upper'],
             args['truncated_avg_depth_value'],
             args['out_file_prefix'],
             args['NCBI_CDS_genomic']
