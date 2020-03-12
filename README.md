@@ -163,8 +163,6 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     python 01c_MagicBlast_ShortRead_Filter.py -i {outfile_name}.shuf.blast
     ```
 
-    *The optional -rtm flag can be useful for calculating unique coverage distances between closely related genomes or MAGs. It will remove all reads with a tied best-hit blast match reducing the coverage calculations for shared (or core) sequence regions and emphasizing the unique sequence components present in-situ*
-
 ### Competitive read recruitment for multiple genomes or MAGs:
 
 1. Append a unique identifier to the beginning of the sequence name for all contigs in the genome or MAG files if you have not done so already.
@@ -231,6 +229,8 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     # Example execution:
     python 01_MagicBlast_ShortRead_Filter.py -i uniqueID_metagenomeID.shuf.blast
     ```
+    
+    *The optional -rtm flag can be useful for calculating unique coverage distances between closely related genomes or MAGs. It will remove all reads with a tied best-hit blast match reducing the coverage calculations for shared (or core) sequence regions and emphasizing the unique sequence components present in-situ*
 
 7. De-concatenate.
 
