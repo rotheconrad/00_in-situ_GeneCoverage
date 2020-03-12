@@ -153,14 +153,14 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
 4. Filter results for best hits.
 
-    *Magic Blast will report multiple results per metagenomic read. For this analysis we only want to count each read once. Magic Blast will also report short sequence alignments of high identity. If a sequence alignment is 20 base pairs but the read is 150 base pairs this is considered to be a wrong match so we remove it. The -pml flag uses a ratio of alignment length / read length to identify results of this type. A value of 0.7, 0.8 or 0.9 is recommended.*
+    *Magic Blast will report multiple results per metagenomic read. For this analysis we only want to count each read once. Magic Blast will also report short sequence alignments of high identity. If a sequence alignment is 20 base pairs but the read is 150 base pairs this is considered to be a wrong match so we remove it. The -pml flag uses a ratio of alignment length / read length to identify results of this type. A value of 0.7, 0.8 or 0.9 is recommended. Defaults are set to 70 bp minium read length and 0.7 alignment length / read length. Use -h to see the help file for paramater usage to change the defaults.*
 
     ```bash
     # To Display the program description and parameter files
     python 01c_MagicBlast_ShortRead_Filter.py -h
 
     # Example execution:
-    python 01c_MagicBlast_ShortRead_Filter.py -i {outfile_name}.shuf.blast -pml 0.9 -rl 70
+    python 01c_MagicBlast_ShortRead_Filter.py -i {outfile_name}.shuf.blast
     ```
 
 
@@ -221,14 +221,14 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
 6. Filter results for best hits.
 
-    *Magic Blast will report multiple results per metagenomic read. For this analysis we only want to count each read once. Magic Blast will also report short sequence alignments of high identity. If a sequence alignment is 20 base pairs but the read is 150 base pairs this is considered to be a wrong match so we remove it. The -pml flag uses a ratio of alignment length / read length to identify results of this type. A value of 0.7, 0.8 or 0.9 is recommended.*
+    *Magic Blast will report multiple results per metagenomic read. For this analysis we only want to count each read once. Magic Blast will also report short sequence alignments of high identity. If a sequence alignment is 20 base pairs but the read is 150 base pairs this is considered to be a wrong match so we remove it. The -pml flag uses a ratio of alignment length / read length to identify results of this type. A value of 0.7, 0.8 or 0.9 is recommended. Defaults are set to 70 bp minium read length and 0.7 alignment length / read length. Use -h to see the help file for paramater usage to change the defaults.*
 
     ```bash
     # To Display the program description and parameter files
     python 01_MagicBlast_ShortRead_Filter.py -h
 
     # Example execution:
-    python 01_MagicBlast_ShortRead_Filter.py -i uniqueID_metagenomeID.shuf.blast -pml 0.9 -rl 70
+    python 01_MagicBlast_ShortRead_Filter.py -i uniqueID_metagenomeID.shuf.blast
     ```
 
 7. De-concatenate.
@@ -277,7 +277,7 @@ prodigal -i genomic_fasta.fna -o my.genes -a my.proteins.faa
 
 ## Step 03: Calculate ANIr and Coverage.
 
-*The script takes 1 uniqueID.blast file at a time with its corresponding metagenome, genomic fasta, and predicted genes files. For the outfile_prefix of the -o flag use the naming scheme of uniqueID_metagenomeID where uniqueID is the unique identifier for your genome or MAG.*
+*The script takes 1 uniqueID.blast file at a time with its corresponding metagenome, genomic fasta, and predicted genes files. For the outfile_prefix of the -o flag use the naming scheme of uniqueID_metagenomeID where uniqueID is the unique identifier for your genome or MAG. The default value for the TAD calculations is set to 80. The defualt value for minimum and maximum percent identity of read alignments to use in the calculations are 94.99 and 100.1. Use -h to see the help file for paramater usage to change the defaults.*
 
 If using NCBI Assembly Files:
 ```bash
