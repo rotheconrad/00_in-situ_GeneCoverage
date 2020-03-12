@@ -583,8 +583,16 @@ def calc_genome_stats(
     wgbreadth = sum(i > 0 for i in wg_tad) / len(wg_tad)
     wgtad = get_average(wg_tad, tad)
 
-    print('... Calculating Total Metagenome Size & Relative Abundance')
-    relabndc, total_metagenome_bp = get_relative_abundance(wg_tad, mtg)
+    if mtg is None:
+        relabndc = 'n/a'
+        total_metagenome_bp = 'n/a'
+    elif mtg.isdigit():
+        total_metagenome_bp = int(mtg)
+        relabndc = (sum(wg_tad) / total_metagenome_bp) * 100
+    else:
+        print('... Calculating Total Metagenome Size & Relative Abundance')
+        relabndc, total_metagenome_bp = get_relative_abundance(wg_tad, mtg)
+        relabndc = f'{relabndc:.{precision}f}%'
 
     print('... Calculating ANI for Genome')
     wganir = get_average(wg_anir, tad)
@@ -596,7 +604,7 @@ def calc_genome_stats(
     wg_lineout = (
             f'{outpre}\t{wgtad:.{precision}f}\t{wgbreadth:.{precision}f}\t'
             f'{wganir:.{precision}f}%\t'
-            f'{relabndc:.{precision}f}%\t{wglen}\t{total_metagenome_bp}\n'
+            f'{relabndc}\t{wglen}\t{total_metagenome_bp}\n'
             )
 
     with open(f'{outpre}_genome.tsv', 'w') as o:
@@ -717,10 +725,13 @@ def main():
         )
     parser.add_argument(
         '-m', '--metagenome_file',
-        help='Please specify the query metagenome fasta file!',
+        help=
+            '(Optional) To calculate relative abundance specify either the path'
+            ' to the metagenome file, or the size of the metagenome in base '
+            'pairs.',
         #metavar='',
         type=str,
-        required=True
+        required=False
         )
     parser.add_argument(
         '-g', '--ref_genome_file',
@@ -738,7 +749,18 @@ def main():
         )
     parser.add_argument(
         '-p', '--prodigal_protein_fasta',
-        help='Use this option for for Prodigal gene prediction fasta!',
+        help=
+            '(Optional) Use this option to report values for genes and '
+            'intergenic regions predicted with Prodigal.',
+        #metavar='',
+        type=str,
+        required=False
+        )
+    parser.add_argument(
+        '-n', '--NCBI_CDS_genomic',
+        help=
+            '(Optional) Use this option to report values for genes and '
+            ' intergenic regions from an NCBI CDS from genomic FASTA file.',
         #metavar='',
         type=str,
         required=False
@@ -777,13 +799,6 @@ def main():
         #metavar='',
         type=str,
         required=True
-        )
-    parser.add_argument(
-        '-n', '--NCBI_CDS_genomic',
-        help='Use this options for NCBI CDS from genomic FASTA file.',
-        #metavar='',
-        type=str,
-        required=False
         )
     args=vars(parser.parse_args())
 
