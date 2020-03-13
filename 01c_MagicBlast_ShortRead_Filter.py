@@ -140,6 +140,7 @@ def remove_tied_matches(filtered_best_hits, o):
 
     print(
         '\nRunning -rtm option to remove reads with tied blast hits.\n'
+        'The tied read count should be higher than the duplicate read count.\n'
         'Printing counts of tied blast hits per pID bin:\n'
         )
     # intialize dict to count ties by whole step pID
