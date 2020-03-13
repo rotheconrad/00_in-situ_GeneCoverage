@@ -130,7 +130,7 @@ def magicblast_filter(infile, pml, rl):
     print('Total number of entries in blast file:', total)
     print('Number of reads failing the filters:', fails)
     print('Number of reads passing the filters:', passes)
-    print('Number of duplicate blast matches passing filter and removed:', dups)
+    print('Number of duplicate blast matches passing filter to remove:', dups)
 
     return header, d
 
