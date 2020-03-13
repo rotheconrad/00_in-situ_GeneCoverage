@@ -59,12 +59,12 @@ from collections import defaultdict
 from collections import OrderedDict
 
 
-def best_hits(query, bitscore, d, line, dups):
+def best_hits(query, bitscore, d, line, dups, pID):
     """ Filters the besthit based on bitscore """
 
     if query in d:
         dups += 1
-        old_bitscore = float(d[query][0].split('\t')[11])
+        old_bitscore = float(d[query][0].split('\t')[12])
 
         if bitscore > old_bitscore:
             d[query] = [line]
@@ -114,7 +114,7 @@ def magicblast_filter(infile, pml, rl):
                 X = l.rstrip().split('\t')
                 query = X[0] # read identifier
                 alignment_score = float(X[12]) # bitscore
-                pIdent = float(X[2]) # percent sequence identity
+                pID = float(X[2]) # percent sequence identity
                 astrt = min(int(X[8]), int(X[9]))
                 astp = max(int(X[8]), int(X[9]))
                 aLen = astp - astrt # read alignment length
@@ -122,7 +122,7 @@ def magicblast_filter(infile, pml, rl):
                 pMatch = aLen / qLen # percent match length of read length
 
                 if pMatch >= pml and qLen >= rl:
-                    d, dups = best_hits(query, alignment_score, d, l, dups)
+                    d, dups = best_hits(query, alignment_score, d, l, dups, pID)
                     passes += 1
                 else:
                     fails += 1
@@ -157,7 +157,11 @@ def remove_tied_matches(filtered_best_hits, o):
         # if more than 1 entry add count to pIDs
         else:
             for i in v:
-                pID = int(v[0].split('\t')[2].split('.')[0])
+                X = i.split('\t')
+                #query = X[0]
+                pID = int(X[2].split('.')[0])
+                #bitscore = float(X[12])
+                #print(query, pID, bitscore)
                 tied_match_count[pID] += 1
                 tiecount += 1
     # sort tied_match_count by descending pID
@@ -175,6 +179,7 @@ def remove_tied_matches(filtered_best_hits, o):
         '\nNumber of tied read matches removed:', tiecount,
         '\nNumber of reads written to file:', writecount, '\n\n'
         )
+
 
 def main():
 
