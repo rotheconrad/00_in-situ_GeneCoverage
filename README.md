@@ -143,13 +143,15 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
     *If you forget to set the -parse_deflines flag to true it will cause errors later.*
 
-3. Shuffle blast results.
+3. ~~Shuffle blast results.~~
 
-    *The Magic Blast results are output in an ordered format. The filter script keeps the first best match which will bias the best match selection of tied results to the first match. Using the blast command shuf will randomize the order of the Magic Blast results file to prevent this bias.*
+    ~~*The Magic Blast results are output in an ordered format. The filter script keeps the first best match which will bias the best match selection of tied results to the first match. Using the blast command shuf will randomize the order of the Magic Blast results file to prevent this bias.*~~
 
     ```bash
     shuf {outfile_name}.blast > {outfile_name}.shuf.blast
     ```
+
+    **The curent version of the filter script 01c_MagicBlast_ShortRead_Filter.py takes care of the randomization and the shuf step is no longer neccessary if using it. If you are using a different script for filtering you may still need to shuffle the result.**
 
 4. Filter results for best hits.
 
@@ -210,13 +212,15 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
 
     *If you forget to set the -parse_deflines flag to true it will cause errors later.*
 
-5. Shuffle blast results.
+5. ~~Shuffle blast results.~~
 
-    *The Magic Blast results are output in an ordered format. The filter script keeps the first best match which will bias the best match selection of tied results to the first match. Using the blast command shuf will randomize the order of the Magic Blast results file to prevent this bias.*
+    ~~*The Magic Blast results are output in an ordered format. The filter script keeps the first best match which will bias the best match selection of tied results to the first match. Using the blast command shuf will randomize the order of the Magic Blast results file to prevent this bias.*~~
 
     ```bash
-    shuf uniqueID_metagenomeID.blast > uniqueID_metagenomeID.shuf.blast
+    shuf {outfile_name}.blast > {outfile_name}.shuf.blast
     ```
+
+    **The curent version of the filter script 01c_MagicBlast_ShortRead_Filter.py takes care of the randomization and the shuf step is no longer neccessary if using it. If you are using a different script for filtering you may still need to shuffle the result.**
 
 6. Filter results for best hits.
 
