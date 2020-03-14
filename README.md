@@ -90,7 +90,7 @@ Information and installation instructions for Magic Blast can be found [here](ht
 For fastq formatted metagenome read files:
 
 ```bash
-# To Display the program description and parameter files
+# To Display the program description and parameter options
 python 01a_Fastq_rename_sequences.py -h
 
 # Example execution:
@@ -100,7 +100,7 @@ python 01a_Fastq_rename_sequences.py -i metagenome_file_name.fastq -p metagenome
 For fasta formatted metagenome read files:
 
 ```bash
-# To Display the program description and parameter files
+# To Display the program description and parameter options
 python 01b_Fasta_rename_sequences.py -h
 
 # Example execution:
@@ -112,7 +112,7 @@ python 01b_Fasta_rename_sequences.py -i metagenome_file_name.fastq -p metagenome
 *Magic Blast truncates sequences names at 50 characters. Prodigal appends the predicted gene number to the end of the sequence names of the contigs. Depending on how many genes you have (2000-8000 typical for microbial genome) your sequence names need to leave enough room to retain the gene number. I typically assign short unique genome identifiers (uniqueID) to the file names of my genomic fasta files or MAGs. I then rename the contigs in each fasta file using this short uniqueID and the contig number like so: uniqueID_contigNumber. This can be accomplished with the following script:*
 
 ```bash
-# To Display the program description and parameter files
+# To Display the program description and parameter options
 python 01b_Fasta_rename_sequences.py -h
 
 # Example execution:
@@ -158,7 +158,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     *Magic Blast will report multiple results per metagenomic read. For this analysis we only want to count each read once. Magic Blast will also report short sequence alignments of high identity. If a sequence alignment is 20 base pairs but the read is 150 base pairs this is considered to be a wrong match so we remove it. The -pml flag uses a ratio of alignment length / read length to identify results of this type. A value of 0.7, 0.8 or 0.9 is recommended. Defaults are set to 70 bp minium read length and 0.7 alignment length / read length. Use -h to see the help file for parameter usage to change the defaults.*
 
     ```bash
-    # To Display the program description and parameter files
+    # To Display the program description and parameter options
     python 01c_MagicBlast_ShortRead_Filter.py -h
 
     # Example execution:
@@ -227,7 +227,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
     *Magic Blast will report multiple results per metagenomic read. For this analysis we only want to count each read once. Magic Blast will also report short sequence alignments of high identity. If a sequence alignment is 20 base pairs but the read is 150 base pairs this is considered to be a wrong match so we remove it. The -pml flag uses a ratio of alignment length / read length to identify results of this type. A value of 0.7, 0.8 or 0.9 is recommended. Defaults are set to 70 bp minium read length and 0.7 alignment length / read length. Use -h to see the help file for parameter usage to change the defaults.*
 
     ```bash
-    # To Display the program description and parameter files
+    # To Display the program description and parameter options
     python 01_MagicBlast_ShortRead_Filter.py -h
 
     # Example execution:
@@ -286,7 +286,7 @@ prodigal -i genomic_fasta.fna -o my.genes -a my.proteins.faa
 
 If using NCBI Assembly Files:
 ```bash
-# To Display the program description and parameter files
+# To Display the program description and parameter options
 python 03a_MagicBlast_CoverageMagic.py -h
 
 # Example execution:
@@ -295,7 +295,7 @@ python 03a_MagicBlast_CoverageMagic.py -m metagenomeID.fna -g uniqueID_genomic_F
 
 If using Prodigal:
 ```bash
-# To Display the program description and parameter files
+# To Display the program description and parameter options
 python 03a_MagicBlast_CoverageMagic.py -h
 
 # Example execution:
@@ -311,7 +311,7 @@ The -c flag is a cutoff threshold for the percent identity of the metagenomic re
 You can visualize your sequence identity distribution with a histogram using the following:
 
 ```bash
-# To Display the program description and parameter files
+# To Display the program description and parameter options
 python 03b_MagicBlast_pIdent_Hist.py -h
 
 # Example execution:
@@ -328,7 +328,7 @@ Or you can use the [Enveomics collection](http://enve-omics.ce.gatech.edu/enveom
 ## Step 04: Generate summary plots.
 
 ```bash
-# To Display the program description and parameter files
+# To Display the program description and parameter options
 python 04a_MagicBlast_CoverageMagic_SummaryPlot.py -h
 
 # Example execution:
@@ -344,7 +344,7 @@ Example plot:
 Move all the genome.tsv files you want to place in the table into their own directory.
 
 ```bash
-# To Display the program description and parameter files
+# To Display the program description and parameter options
 python 05_MagicBlast_CoverageMagic_CombineGenomeStats.py -h
 
 # Example execution:
