@@ -134,7 +134,7 @@ def calc_genome_coverage(tbf, rgf_tad, rgf_ani, lthd, uthd):
         for l in f:
             # Progress Tracker
             if read_count % 50000 == 0:
-                print(f'... Blast matches processed ... {read_count:013}')
+                print(f'... Blast matches processed so far ... {read_count:013}')
             read_count += 1
 
             # Skip magic blast header
