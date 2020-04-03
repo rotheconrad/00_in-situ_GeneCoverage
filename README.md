@@ -39,17 +39,17 @@ This protocol uses MagicBlast for read mapping, Prodigal or NCBI CDS from genomi
 
 - 3 column tsv output of (Contig, Gene, or Intergenic region), (Depth, Breadth, or ANIr), sequence length.
 - Writes 11 files total:
-    - \{out_file_prefix\}_genome_by_bp.tsv
+    - \{out_file_prefix\}_genome_by_bp.tsv (make optional)
     - \{out_file_prefix\}_genome.tsv
-    - \{out_file_prefix\}_contig_tad.tsv
+    - \{out_file_prefix\}_contig_tad.tsv 
     - \{out_file_prefix\}_contig_breadth.tsv
-    - \{out_file_prefix\}_contig_anir.tsv
-    - \{out_file_prefix\}_gene_tad.tsv
-    - \{out_file_prefix\}_gene_breadth.tsv
-    - \{out_file_prefix\}_gene_anir.tsv
-    - \{out_file_prefix\}_intergene_tad.tsv
-    - \{out_file_prefix\}_intergene_breadth.tsv
-    - \{out_file_prefix\}_intergene_anir.tsv
+    - \{out_file_prefix\}_contig_anir.tsv (make optional)
+    - \{out_file_prefix\}_gene_tad.tsv (optional)
+    - \{out_file_prefix\}_gene_breadth.tsv (optional)
+    - \{out_file_prefix\}_gene_anir.tsv (optional - add additional option)
+    - \{out_file_prefix\}_intergene_tad.tsv (optional)
+    - \{out_file_prefix\}_intergene_breadth.tsv (optional)
+    - \{out_file_prefix\}_intergene_anir.tsv (optional - add additional option)
 
 
 ## Step 00: Required tools :: Python 3.6+, Prodigal and Magic Blast.
@@ -265,7 +265,7 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
         done < uniqueID_list.txt
     ```
 
-    *Another method that works even if you ran Magic Blast with paired option*
+    *Another method that works even if you ran Magic Blast with paired option thanks to Nastassia Patin @microbesatsea*
 
     ```bash
     while read uniqueID
@@ -273,6 +273,23 @@ python 01b_Fasta_rename_sequences.py -i genomic_fasta.fna -p uniqueID
             awk -F '\t' '$2 ~ /$uniqueID/' uniqueID_metagenomeID.fltrdBstHts.blst >> ${uniqueID}.blast
         done < uniqueID_list.txt
     ```
+
+    *And additional options to de-concatenate from Nastassia Patin @microbesatsea*
+
+    ```bash
+    #To split one filtered .blst file by a list of MAGs in the file MAGs_list.txt:
+    while read line; do
+        awk -v line="$line" -F '\t' '$2 ~ line' file.blst >> 'file_'$line'.tsv'
+    done < MAGs_list.txt
+
+    #To split several filtered .blst files by the same list, retaining blast file name and MAG name in the output file names:
+    for f in *.blst; do
+        n=`echo $f | cut -d _ -f 1` &&
+            while read line; do 
+                awk -v line="$line" -F '\t' '$2 ~ line' $f >> $n'_'$line'.tsv';
+            done < MAGs_list.txt
+    done
+```
 
 
 ## Step 02: Predict protein coding genes with Prodigal.
