@@ -6,9 +6,9 @@ This tool takes the following input parameters:
 
     * The -o out_file_prefix from CoveragePlus script used to name:
         *_genome_by_bp.tsv
-        *_contig_ani.tsv
+        *_contig_anir.tsv
         *_contig_tad.tsv
-        *_gene_ani.tsv
+        *_gene_anir.tsv
         *_gene_tad.tsv
 
 This script returns the following files:
@@ -425,7 +425,7 @@ def main():
         )
     parser.add_argument(
         '-pre', '--input_file_prefix',
-        help='Please specify the prefix for TAD ANI tsv files!',
+        help='Please specify the prefix for TAD and ANI tsv files!',
         metavar=':',
         type=str,
         required=True
@@ -457,9 +457,9 @@ def main():
     print('\nRunning Script...\n')
 
     gbp = f"{args['input_file_prefix']}_genome_by_bp.tsv"
-    cani = f"{args['input_file_prefix']}_contig_ani.tsv"
+    cani = f"{args['input_file_prefix']}_contig_anir.tsv"
     ctad = f"{args['input_file_prefix']}_contig_tad.tsv"
-    gani = f"{args['input_file_prefix']}_gene_ani.tsv"
+    gani = f"{args['input_file_prefix']}_gene_anir.tsv"
     gtad = f"{args['input_file_prefix']}_gene_tad.tsv"
     out_file = f"{args['input_file_prefix']}_TAD_ANIr_plot.png"
 
