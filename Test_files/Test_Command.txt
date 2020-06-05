@@ -1,0 +1,7 @@
+Test Command
+
+python 03a_MagicBlast_CoverageMagic.py -h
+
+From Test directory:
+
+python ../Test03a_MagicBlast_CoverageMagic.py -m data/test_metagenome.fastq -g data/test_genome.fna -b results/test_magicblast.fltrdBstHts.blst -p data/test_genes.fnn -o rpkmTest
