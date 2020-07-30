@@ -13,7 +13,10 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !! It is recommended to randomly shuffle the Magic Blast results      !!
 !! before running this filter to randomize the selection of ties      !!
-!! between alignment scores. Use bash command shuf or other method.   !!
+!! between alignment scores. This can be accomplished with the bash   !!
+!! command shuf, but the current version of this script uses the      !!
+!! python random module to select tied matches. The bash shuf step    !!
+!! is no longer neccessary.                                           !!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 This script filters tabular Magic Blast output for best hit based on

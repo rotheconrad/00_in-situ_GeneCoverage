@@ -230,7 +230,8 @@ def retrieve_ncbi_gene_coverage(pgf, rgf_tad, rgf_ani):
         stp = 0
         for name, seq in read_fasta(f):
             contig_name = '_'.join(name.split('|')[1].split('_')[:2])
-            protein = name.split('protein=')[1].split(']')[0]
+            try: protein = name.split('protein=')[1].split(']')[0]
+            except: protein = 'n/a'
             try: protein_id = name.split('protein_id=')[1].split(']')[0]
             except: protein_id = 'pseudo-gene'
             locus_tag = name.split('locus_tag=')[1].split(']')[0]
